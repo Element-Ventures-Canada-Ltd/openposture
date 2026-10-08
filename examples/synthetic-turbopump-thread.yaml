@@ -1,0 +1,128 @@
+# Handling: Unclassified — public
+# SYNTHETIC EXAMPLE ONLY — every name, part number, serial, lot, issuer and source below is fictional.
+# Schema v0.2.0-draft. Traces fictional rotor serial R-100-0007 end to end (material lot -> build ->
+# four post-processing steps -> cleaning -> inspection -> assembly), each step with an EvidenceRecord.
+# A second serial, R-100-0008, shows a cleaning step with NO EvidenceRecord: the gap is shown, not filled.
+# Hashes are placeholders. No technical data: step kinds only, never parameters or results.
+
+objects:
+  # ---- organizations and sites (fictional) ----
+  - { type: Entity, id: ent-1001, name: "Northfield Test Foundry", entity_kind: company, incorporation_jurisdiction: CA,
+      controlling_jurisdiction: CA, evidence_grade: confirmed, sources: ["https://example.org/synthetic/ent-1001"],
+      as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: Entity, id: ent-1002, name: "Example Rotor Works", entity_kind: company, incorporation_jurisdiction: CA,
+      controlling_jurisdiction: CA, evidence_grade: confirmed, sources: ["https://example.org/synthetic/ent-1002"],
+      as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: Facility, id: fac-1001, name: "Example Rotor Works, build hall", facility_kind: manufacturing, host_jurisdiction: CA-ON,
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/fac-1001"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: Facility, id: fac-1002, name: "Harbour Finishing Works", facility_kind: processing, host_jurisdiction: CA-QC,
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/fac-1002"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: Facility, id: fac-1003, name: "Lakeside Surface Co", facility_kind: processing, host_jurisdiction: CA-ON,
+      evidence_grade: reported, sources: ["https://example.org/synthetic/fac-1003"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- designs, material and physical pieces ----
+  - { type: Component, id: cmp-1001, name: "Rotor R-100", part_number: "R-100", revision: "B", component_kind: rotor,
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/cmp-1001"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: Component, id: cmp-1002, name: "Seal housing S-20", part_number: "S-20", revision: "A", component_kind: housing,
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/cmp-1002"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: MaterialLot, id: lot-1001, name: "Powder lot NF-0042", lot_number: "NF-0042", material_class: metal_powder,
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/lot-1001"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: SerialItem, id: ser-1007, name: "R-100-0007", serial: "R-100-0007",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/ser-1007"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: SerialItem, id: ser-1008, name: "R-100-0008", serial: "R-100-0008",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/ser-1008"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- process steps for R-100-0007 (all evidenced) ----
+  - { type: ProcessStep, id: stp-1701, step_kind: build,          evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1701"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1702, step_kind: stress_relief,  evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1702"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1703, step_kind: hip,            evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1703"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1704, step_kind: heat_treatment, evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1704"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1705, step_kind: machining,      evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1705"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1706, step_kind: cleaning,       evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1706"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1707, step_kind: inspection,     evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1707"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: ProcessStep, id: stp-1708, step_kind: assembly,       evidence_grade: confirmed, sources: ["https://example.org/synthetic/stp-1708"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- process step for R-100-0008 (cleaning, no evidence record: a gap) ----
+  - { type: ProcessStep, id: stp-1806, step_kind: cleaning, evidence_grade: reported, sources: ["https://example.org/synthetic/stp-1806"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- evidence records: pointers only (placeholder hashes) ----
+  - { type: EvidenceRecord, id: evd-1700, record_kind: material_certificate, issuer: "Northfield Test Foundry", issued_on: 2026-03-02,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001700",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1700"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1701, record_kind: build_record, issuer: "Example Rotor Works", issued_on: 2026-03-20,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001701",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1701"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1702, record_kind: heat_treatment_record, issuer: "Example Rotor Works", issued_on: 2026-03-24,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001702",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1702"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1703, record_kind: heat_treatment_record, issuer: "Example Rotor Works", issued_on: 2026-03-30,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001703",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1703"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1704, record_kind: heat_treatment_record, issuer: "Example Rotor Works", issued_on: 2026-04-03,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001704",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1704"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1705, record_kind: inspection_report, issuer: "Harbour Finishing Works", issued_on: 2026-04-14,
+      citation: "https://example.org/synthetic/reports/hfw-0007", citation_section: "Section 2",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1705"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1706, record_kind: cleaning_certificate, issuer: "Harbour Finishing Works", issued_on: 2026-04-17,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001706",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1706"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1707, record_kind: inspection_report, issuer: "Example Rotor Works", issued_on: 2026-04-22,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001707",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1707"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: EvidenceRecord, id: evd-1708, record_kind: assembly_record, issuer: "Example Rotor Works", issued_on: 2026-04-29,
+      content_hash: "sha256:0000000000000000000000000000000000000000000000000000000000001708",
+      evidence_grade: confirmed, sources: ["https://example.org/synthetic/evd-1708"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- critical items: judgments, synthetic only ----
+  - { type: CriticalItem, id: cri-1001, name: "Single-source feedstock lot", delay_band: d90_180, single_source: true, qualified_alternate: false,
+      evidence_grade: inferred, sources: ["https://example.org/synthetic/cri-1001"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: CriticalItem, id: cri-1002, name: "Seal housing finishing, alternate qualified", delay_band: d30_90, single_source: false, qualified_alternate: true,
+      evidence_grade: inferred, sources: ["https://example.org/synthetic/cri-1002"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: CriticalItem, id: cri-1003, name: "Cleaning record missing for R-100-0008", delay_band: d30_90, single_source: false, qualified_alternate: false,
+      missing_evidence: true, evidence_grade: inferred, sources: ["https://example.org/synthetic/cri-1003"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+links:
+  # ---- design, material and supplier ----
+  - { type: instance_of, id: lnk-1001, from: ser-1007, to: cmp-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1001"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: instance_of, id: lnk-1002, from: ser-1008, to: cmp-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1002"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: made_from,   id: lnk-1003, from: ser-1007, to: lot-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1003"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: made_from,   id: lnk-1004, from: ser-1008, to: lot-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1004"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: produced_by, id: lnk-1005, from: lot-1001, to: ent-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1005"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: located_at,  id: lnk-1006, from: ent-1002, to: fac-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1006"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- R-100-0007: ordered steps ----
+  - { type: underwent, id: lnk-1701, from: ser-1007, to: stp-1701, sequence: 1, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1701"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1702, from: ser-1007, to: stp-1702, sequence: 2, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1702"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1703, from: ser-1007, to: stp-1703, sequence: 3, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1703"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1704, from: ser-1007, to: stp-1704, sequence: 4, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1704"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1705, from: ser-1007, to: stp-1705, sequence: 5, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1705"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1706, from: ser-1007, to: stp-1706, sequence: 6, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1706"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1707, from: ser-1007, to: stp-1707, sequence: 7, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1707"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: underwent, id: lnk-1708, from: ser-1007, to: stp-1708, sequence: 8, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1708"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- R-100-0007: where each step happened ----
+  - { type: performed_at, id: lnk-1711, from: stp-1701, to: fac-1001, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1711"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: performed_at, id: lnk-1715, from: stp-1705, to: fac-1002, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1715"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: performed_at, id: lnk-1716, from: stp-1706, to: fac-1002, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1716"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- R-100-0007: evidence for every step (the lot certificate hangs off the build step) ----
+  - { type: evidenced_by, id: lnk-1720, from: stp-1701, to: evd-1700, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1720"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1721, from: stp-1701, to: evd-1701, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1721"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1722, from: stp-1702, to: evd-1702, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1722"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1723, from: stp-1703, to: evd-1703, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1723"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1724, from: stp-1704, to: evd-1704, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1724"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1725, from: stp-1705, to: evd-1705, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1725"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1726, from: stp-1706, to: evd-1706, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1726"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1727, from: stp-1707, to: evd-1707, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1727"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: evidenced_by, id: lnk-1728, from: stp-1708, to: evd-1708, evidence_grade: confirmed, sources: ["https://example.org/synthetic/lnk-1728"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- R-100-0008: cleaning step with no evidenced_by link (the gap) ----
+  - { type: underwent,    id: lnk-1806, from: ser-1008, to: stp-1806, sequence: 6, evidence_grade: reported, sources: ["https://example.org/synthetic/lnk-1806"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: performed_at, id: lnk-1816, from: stp-1806, to: fac-1002, evidence_grade: reported, sources: ["https://example.org/synthetic/lnk-1816"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+
+  # ---- critical items ----
+  - { type: flags,         id: lnk-1901, from: cri-1001, to: lot-1001, evidence_grade: inferred, sources: ["https://example.org/synthetic/lnk-1901"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: flags,         id: lnk-1902, from: cri-1002, to: cmp-1002, evidence_grade: inferred, sources: ["https://example.org/synthetic/lnk-1902"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: alternate_for, id: lnk-1903, from: fac-1003, to: cri-1002, evidence_grade: inferred, sources: ["https://example.org/synthetic/lnk-1903"], as_of: 2026-10-07, lifecycle: active, synthetic: true }
+  - { type: flags,         id: lnk-1904, from: cri-1003, to: stp-1806, evidence_grade: inferred, sources: ["https://example.org/synthetic/lnk-1904"], as_of: 2026-10-07, lifecycle: active, synthetic: true }

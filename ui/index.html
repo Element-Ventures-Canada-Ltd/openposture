@@ -1,0 +1,32 @@
+<!doctype html>
+<!-- Handling: Unclassified — public -->
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenPosture</title>
+<style>
+:root{--bg:#fff;--fg:#1b1f24;--muted:#57606a;--line:#d0d7de;--ok:#1a7f37;--gap:#bc4c00}
+@media (prefers-color-scheme:dark){:root{--bg:#0d1117;--fg:#e6edf3;--muted:#8d96a0;--line:#30363d;--ok:#3fb950;--gap:#db6d28}}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,sans-serif;margin:0 auto;max-width:960px;padding:24px 16px}
+h1{font-size:22px;margin:0 0 4px}.muted{color:var(--muted)}
+table{border-collapse:collapse;width:100%;margin:12px 0 28px}th,td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left}
+.ok{color:var(--ok)}.gap{color:var(--gap);font-weight:600}.note{border:1px dashed var(--line);padding:10px;margin:16px 0}
+</style></head><body>
+<h1>OpenPosture</h1><div class="muted">Evidence posture from an OpenChokepoint registry. Synthetic data. Public tier.</div>
+<div class="note" id="note"></div><div id="out">Loading posture.json…</div>
+<script>
+fetch('posture.json').then(r=>r.json()).then(d=>{
+  document.getElementById('note').textContent=d.assessment_note;
+  const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  let h='';
+  for(const s of d.serials){
+    h+=`<h2>${esc(s.serial)} <span class="muted">(${esc(s.design)}${s.synthetic?', synthetic':''})</span></h2>`;
+    h+=`<div class="muted">${s.with_evidence} of ${s.steps.length} steps have an evidence record${s.ordered?'':' · order not shown (public-tier rule)'}</div>`;
+    h+='<table><tr><th>'+(s.ordered?'#':'')+'</th><th>Step</th><th>Evidence record</th></tr>'+
+      s.steps.map((x,i)=>`<tr><td>${s.ordered?i+1:''}</td><td>${esc(x.kind)}</td><td class="${x.evidence?'ok':'gap'}">${x.evidence?'present':'missing'}</td></tr>`).join('')+'</table>';
+  }
+  if(d.synthetic_critical_items.length){
+    h+='<h2>Synthetic critical items</h2><table><tr><th>Item</th><th>Flags</th><th>Single source</th><th>Qualified alternate</th></tr>'+
+      d.synthetic_critical_items.map(c=>`<tr><td>${esc(c.name||c.id)}</td><td>${esc(c.targets.join(', '))}</td><td>${c.single_source?'yes':'no'}</td><td>${c.qualified_alternate?'yes':'no'}</td></tr>`).join('')+'</table>';
+  }
+  document.getElementById('out').innerHTML=h;
+}).catch(()=>{document.getElementById('out').textContent='Run engine/run.py to create posture.json first.'});
+</script></body></html>
