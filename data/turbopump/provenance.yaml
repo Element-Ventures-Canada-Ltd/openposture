@@ -1,0 +1,19 @@
+# Handling: Unclassified — public
+handling: "Unclassified — public"
+contribution: "Turbopump module: public-record supplier map (v0.1)"
+type: dataset
+sources:
+  - description: "Launch Canada turbopump programme pages and press coverage; company, government and trade-press pages cited per record in entities.yaml and bom.yaml"
+    url: "https://www.launchcanada.org/special-projects"
+    licence: "Facts recorded in our own words; each record links its source"
+    retrieved: "2026-10-08"
+synthetic: false
+personal_information: none
+export_controlled: false
+training_rights_confirmed: true
+base_model: ""
+notes: >
+  Mapping only: part categories, export-list category, public-capability candidates, ownership and
+  location. No materials, processes, dimensions, performance, test or lead-time data. Every supplier
+  link is a public-capability candidate, not a verified or qualified supplier. Gaps are shown as gaps.
+  Export-control screen (EXPORT-CONTROL.md) run 2026-10-08: questions 1-6 answered no at category level.

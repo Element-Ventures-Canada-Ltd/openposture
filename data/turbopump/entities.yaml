@@ -1,0 +1,466 @@
+# Handling: Unclassified — public
+# SPDX-License-Identifier: Apache-2.0
+# Turbopump module: public-record entities. Every record cites an https source.
+# Every supplier link elsewhere is a public-capability CANDIDATE, not a verified or qualified supplier.
+# ownership_class is kept separate from location: a foreign-owned plant in Canada is not domestic.
+
+synthetic: false
+as_of: '2026-10-08'
+entities:
+- id: E-001
+  name: Launch Canada (Launch Canada Rocketry Association)
+  role: design_authority
+  source_type: launch_canada_public_statement
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: Turbopump R&D programme owner; Phase 1 electric fuel pump, Phase 2 electric LOX pump, Phase 3 gas-generator
+    turbopump
+  evidence_grade: reported
+  citability: P
+  sources:
+  - https://www.launchcanada.org/special-projects
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-002
+  name: EOS GmbH
+  role: supplier
+  source_type: launch_canada_public_statement
+  ownership_class: Foreign
+  parent_jurisdiction: DE
+  location:
+    country: DE
+  capability: Laser powder bed fusion machines; printed titanium pump components and trained the team in design
+    for additive manufacturing
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-003
+  name: Undisclosed German bearing developer
+  role: supplier
+  source_type: launch_canada_public_statement
+  ownership_class: Foreign
+  parent_jurisdiction: DE
+  location:
+    country: DE
+  capability: Developing ceramic-matrix-composite bearings; modified fuel pump being built to test them
+  identity_known: false
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-004
+  name: SoftInWay Inc.
+  role: tooling
+  source_type: launch_canada_public_statement
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  location:
+    country: US
+  capability: AxSTREAM turbomachinery design and rotor-dynamics software and training
+  evidence_grade: confirmed
+  citability: P
+  sources:
+  - https://www.softinway.com/softinway-supports-next-generation-of-rocketry-engineers-through-new-partnership-with-launch-canada/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-005
+  name: Carter Manufacturing Ltd (Carter Bearings)
+  role: supplier
+  source_type: launch_canada_public_statement
+  ownership_class: Foreign
+  parent_jurisdiction: GB
+  location:
+    country: GB
+  capability: Bearings for the first student-developed cryogenic turbopump (sponsor)
+  evidence_grade: confirmed
+  citability: P
+  sources:
+  - https://www.carterbearings.co.uk/carter-americas-sponsors-launch-of-rocket-propulsion-in-canada/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-007
+  name: Pratt & Whitney Canada
+  role: talent_and_capability
+  source_type: launch_canada_public_statement
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: US
+  ultimate_parent: RTX Corporation
+  location:
+    country: CA
+    region: QC
+  capability: Turbomachinery workforce (several Launch Canada volunteers); gas turbines and fuel systems
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://spaceq.ca/from-competition-to-rd-launch-canada-to-build-critical-turbopump-tech/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-008
+  name: Canadian Space Agency (Space Technology Development Program)
+  role: funder
+  source_type: launch_canada_public_statement
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: QC
+  capability: Funder of agreement 25STDPY20, a prototype reusable semi-cryogenic turbopump
+  evidence_grade: confirmed
+  citability: P
+  sources:
+  - https://search.open.canada.ca/grants/record/csa-asc%2C003-2025-2026-Q2-00033%2Ccurrent
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-009
+  name: Government of Canada (Launch the North)
+  role: funder
+  source_type: launch_canada_public_statement
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: C$1.2M workforce-stream award to Launch Canada; expands special projects such as the turbopump
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://spaceq.ca/launch-canada-funding-1-2m-dnd-rocketry-training/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-010
+  name: Burloak Technologies (i3D Manufacturing)
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: UNVERIFIED
+  ultimate_parent: Not verified (public reports name i3D Manufacturing as acquirer)
+  location:
+    country: CA
+    region: true
+  capability: Metal additive manufacturing (LPBF, E-PBF), HIP, heat treatment, CNC finishing; Inconel, titanium,
+    aluminium
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.metal-am.com/i3d-manufacturing-acquires-burloak-technologies/
+  - https://aiac.ca/members/burloak-technologies-inc/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-011
+  name: AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: US
+  ultimate_parent: GE Aerospace
+  location:
+    country: CA
+    region: QC
+  capability: Plasma-atomized titanium and nickel-718 powders; metal additive manufacturing
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.voxelmatters.directory/company/advance-powders/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-012
+  name: Tekna Plasma Systems
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: UNVERIFIED
+  location:
+    country: CA
+    region: QC
+  capability: Plasma-atomized metal powders (titanium alloys)
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://3dprintingindustry.com/news/tekna-defeats-colibrium-additives-apc-in-metal-powder-patent-dispute-231352/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-013
+  name: Magellan Aerospace
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: Aerospace sand castings (Haley, ON) including pump housings; A20X aluminium licensee; engine shafts
+    (Haverhill, US)
+  evidence_grade: reported
+  citability: P
+  sources:
+  - https://magellan.aero/location/magellan-aerospace-haley/
+  - https://www.newswire.ca/news-releases/magellan-aerospace-becomes-aeromet-a20x-advanced-aluminium-foundry-licensee-697617541.html
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-014
+  name: Bristol Aerospace (Magellan division)
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: MB
+  capability: Domestic solid-propellant rocket motors and propulsion manufacturing
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://en.wikipedia.org/wiki/Bristol_Aerospace
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-015
+  name: Neo Performance Materials
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: EE
+    note: Toronto HQ; magnet plant in Narva, Estonia
+  capability: Sintered NdFeB permanent magnets
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.neomaterials.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-016
+  name: REalloys Inc.
+  role: supplier
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  location:
+    country: CA
+    region: SK
+    note: metal in SK; magnets in Ohio, US
+  capability: NdFeB magnet alloy and sintered magnets (production 2027)
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.realloys.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-017
+  name: NordSpace
+  role: demand
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: Launch-vehicle developer; Launch the North Stream 1 awardee; potential turbopump customer
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://nordspace.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-018
+  name: Reaction Dynamics
+  role: demand
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: QC
+  capability: Launch-vehicle developer; Launch the North Stream 1 awardee; potential turbopump customer
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://reactiondynamics.space/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-019
+  name: Canada Rocket Company
+  role: test_capacity
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: Launch-vehicle developer; Jeremy Hansen Test Facility (London, ON), engine test stands expected fully
+    operational by 2028
+  available_from: '2028-01-01'
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://ca.finance.yahoo.com/news/canadian-company-build-countrys-first-153013394.html
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-020
+  name: Linamar Corporation
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian
+  parent_jurisdiction: CA
+  location:
+    country: CA
+    region: true
+  capability: High-volume precision machining, forging, high- and low-pressure die casting; eAxle integration
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://electricautonomy.ca/ev-supply-chain/manufacturing/2025-01-28/linamar-ev-investment-guelph-ontario/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-021
+  name: Stackpole International
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: HK
+  ultimate_parent: Johnson Electric
+  location:
+    country: CA
+    region: true
+  capability: Automotive oil and transmission pumps; powder-metal rotors
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.crestview.com/news/18
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-022
+  name: Dana TM4
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: US
+  ultimate_parent: Dana Incorporated
+  location:
+    country: CA
+    region: QC
+  capability: Permanent-magnet motors and inverters
+  evidence_grade: reported
+  citability: P
+  sources:
+  - https://www.dana.com/newsroom/press-releases/dana-delivers-superior-torque-longer-range-for-light-vehicles-through-its-enhanced-tm4-motive-motor-and-inverter/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-023
+  name: Rio Tinto Canada (Aluminium)
+  role: supplier
+  source_type: public_record
+  ownership_class: Canadian subsidiary of foreign parent
+  parent_jurisdiction: GB
+  ultimate_parent: Rio Tinto Group
+  location:
+    country: CA
+    region: QC
+  capability: Primary aerospace-grade aluminium
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.riotinto.com/en/can
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-024
+  name: Cerobear (MinebeaMitsumi)
+  role: supplier
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: JP
+  location:
+    country: DE
+  capability: Custom hybrid and all-ceramic bearings with SSME turbopump heritage
+  evidence_grade: confirmed
+  citability: P
+  sources:
+  - https://product.minebeamitsumi.com/en/product/category/bearing/cerobear/index.html
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-025
+  name: Barber-Nichols
+  role: allied_reference
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  location:
+    country: US
+  capability: Rocket turbopump design and build (benchmark design authority)
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.barber-nichols.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-026
+  name: Concepts NREC
+  role: allied_reference
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  location:
+    country: US
+  capability: Rocket turbopump design (qualified alternate design authority)
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.conceptsnrec.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-027
+  name: Special Metals Corp. (Precision Castparts)
+  role: supplier
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  ultimate_parent: Berkshire Hathaway
+  location:
+    country: US
+  capability: Inconel 718 originator; superalloy bar and forging stock
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.specialmetals.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-028
+  name: Moog Inc.
+  role: supplier
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: US
+  location:
+    country: US
+  capability: Engine control valves, cryogenic components, propellant feed systems
+  evidence_grade: reported
+  citability: AS
+  sources:
+  - https://www.moog.com/
+  as_of: '2026-10-08'
+  synthetic: false
+- id: E-029
+  name: DLR Institute of Space Propulsion
+  role: test_capacity
+  source_type: public_record
+  ownership_class: Foreign
+  parent_jurisdiction: DE
+  location:
+    country: DE
+  capability: Modular turbopump test bench (750 kW, 65,000 rpm, LOX/methane/LH2) and cryogenic bearing and seal
+    bench
+  evidence_grade: confirmed
+  citability: P
+  sources:
+  - https://www.dlr.de/en/ra/about-us/departments/rocket-propulsion-systems/turbo-pump-technology
+  as_of: '2026-10-08'
+  synthetic: false
