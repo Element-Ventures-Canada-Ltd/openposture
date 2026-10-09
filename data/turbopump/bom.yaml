@@ -1,0 +1,327 @@
+# Handling: Unclassified — public
+# SPDX-License-Identifier: Apache-2.0
+# Turbopump module: reference bill-of-materials categories for a small LOX/kerosene
+# gas-generator turbopump (Launch Canada public turbopump programme, ~5 kN class).
+# Mapping only: part categories, export-list category and public-capability candidates.
+# No materials, processes, dimensions, performance or lead-time data (EXPORT-CONTROL.md).
+# The part tree is an illustrative reference architecture, not a design.
+
+synthetic: false
+as_of: '2026-10-08'
+reference:
+  description: 'Launch Canada turbopump programme (public): electric drive in Phases 1-2, gas-generator turbopump
+    in Phase 3'
+  sources:
+  - https://www.launchcanada.org/special-projects
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+parts:
+- id: TP-000
+  level: 0
+  parent: null
+  name: Turbopump assembly
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-001
+  sources:
+  - https://www.launchcanada.org/special-projects
+- id: TP-100
+  level: 1
+  parent: TP-000
+  name: Fuel (RP-1) pump assembly
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-001
+  - E-002
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+- id: TP-110
+  level: 2
+  parent: TP-100
+  name: Fuel inducer
+  candidates:
+  - E-002
+  - E-010
+- id: TP-120
+  level: 2
+  parent: TP-100
+  name: Fuel impeller
+  candidates:
+  - E-002
+  - E-010
+- id: TP-130
+  level: 2
+  parent: TP-100
+  name: Fuel volute / housing
+  candidates:
+  - E-002
+  - E-010
+  - E-013
+  - E-020
+- id: TP-140
+  level: 2
+  parent: TP-100
+  name: Wear rings / diffuser
+  candidates:
+  - E-020
+- id: TP-200
+  level: 1
+  parent: TP-000
+  name: LOX pump assembly
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-001
+  sources:
+  - https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf
+- id: TP-210
+  level: 2
+  parent: TP-200
+  name: LOX inducer
+  candidates:
+  - E-010
+  - E-011
+- id: TP-220
+  level: 2
+  parent: TP-200
+  name: LOX impeller
+  candidates:
+  - E-010
+  - E-011
+- id: TP-230
+  level: 2
+  parent: TP-200
+  name: LOX volute / housing
+  candidates:
+  - E-010
+  - E-013
+- id: TP-240
+  level: 2
+  parent: TP-200
+  name: LOX pump motor (Phase 2)
+  candidates:
+  - E-022
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+- id: TP-300
+  level: 1
+  parent: TP-000
+  name: Turbine assembly
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-001
+- id: TP-310
+  level: 2
+  parent: TP-300
+  name: Turbine blisk
+  candidates:
+  - E-010
+  sources:
+  - https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging
+- id: TP-320
+  level: 2
+  parent: TP-300
+  name: Turbine nozzle / stator
+  candidates:
+  - E-010
+  - E-011
+- id: TP-330
+  level: 2
+  parent: TP-300
+  name: Turbine manifold / exhaust housing
+  candidates:
+  - E-010
+  - E-011
+- id: TP-400
+  level: 1
+  parent: TP-000
+  name: Rotor, bearing and seal system
+  candidates:
+  - E-001
+- id: TP-410
+  level: 2
+  parent: TP-400
+  name: Main shaft
+  candidates:
+  - E-020
+  - E-013
+- id: TP-420
+  level: 2
+  parent: TP-400
+  name: Cryogenic bearings
+  candidates:
+  - E-003
+  - E-005
+  - E-024
+  sources:
+  - https://product.minebeamitsumi.com/en/product/category/bearing/cerobear/index.html
+- id: TP-430
+  level: 2
+  parent: TP-400
+  name: Dynamic seals
+  candidates: []
+  sources:
+  - https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf
+- id: TP-440
+  level: 2
+  parent: TP-400
+  name: Balance piston / thrust balance
+  candidates:
+  - E-020
+- id: TP-450
+  level: 2
+  parent: TP-400
+  name: High-speed rotor balancing (service)
+  candidates:
+  - E-020
+- id: TP-500
+  level: 1
+  parent: TP-000
+  name: Gas generator assembly (Phase 3)
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-001
+  sources:
+  - https://www.launchcanada.org/special-projects
+- id: TP-510
+  level: 2
+  parent: TP-500
+  name: GG injector
+  candidates:
+  - E-010
+  - E-011
+- id: TP-520
+  level: 2
+  parent: TP-500
+  name: GG chamber
+  candidates:
+  - E-010
+  - E-011
+- id: TP-530
+  level: 2
+  parent: TP-500
+  name: Igniter
+  candidates: []
+- id: TP-600
+  level: 1
+  parent: TP-000
+  name: Electric drive (Phases 1-2 test configuration)
+  candidates:
+  - E-001
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+- id: TP-610
+  level: 2
+  parent: TP-600
+  name: High-speed permanent-magnet motor
+  candidates:
+  - E-022
+  sources:
+  - https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/
+- id: TP-620
+  level: 2
+  parent: TP-600
+  name: Inverter / motor controller
+  candidates:
+  - E-022
+- id: TP-700
+  level: 1
+  parent: TP-000
+  name: Propellant and GG valves
+  candidates:
+  - E-028
+- id: TP-710
+  level: 2
+  parent: TP-700
+  name: Instrumentation
+  candidates: []
+- id: TP-800
+  level: 1
+  parent: TP-000
+  name: Fasteners
+  candidates: []
+  sources:
+  - https://www.smartindunews.com/news/Latest_Sector_News/Aerospace_Components_Shortages_Are_Reshaping_Lead_Times.html
+- id: TP-810
+  level: 2
+  parent: TP-800
+  name: Static seals / gaskets
+  candidates: []
+- id: TP-910
+  level: 3
+  parent: TP-220
+  name: Nickel superalloy powder (additive)
+  candidates:
+  - E-011
+  sources:
+  - https://www.voxelmatters.directory/company/advance-powders/
+- id: TP-920
+  level: 3
+  parent: TP-120
+  name: Titanium alloy powder (additive)
+  candidates:
+  - E-011
+  - E-012
+  sources:
+  - https://3dprintingindustry.com/news/tekna-defeats-colibrium-additives-apc-in-metal-powder-patent-dispute-231352/
+- id: TP-930
+  level: 3
+  parent: TP-310
+  name: Nickel superalloy bar / forging stock
+  candidates:
+  - E-027
+  sources:
+  - https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging
+- id: TP-940
+  level: 3
+  parent: TP-130
+  name: Titanium billet / bar
+  candidates: []
+  sources:
+  - https://www.argusmedia.com/en/news-and-insights/latest-market-news/2860247-jet-engines-driving-nickel-pq-titanium-demand
+- id: TP-950
+  level: 3
+  parent: TP-410
+  name: Stainless and bearing steels
+  candidates: []
+  sources:
+  - https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging
+- id: TP-960
+  level: 3
+  parent: TP-130
+  name: Aluminium casting alloy
+  candidates:
+  - E-023
+  - E-013
+  sources:
+  - https://www.newswire.ca/news-releases/magellan-aerospace-becomes-aeromet-a20x-advanced-aluminium-foundry-licensee-697617541.html
+- id: TP-970
+  level: 3
+  parent: TP-420
+  name: Ceramic bearing ball blanks
+  candidates: []
+- id: TP-980
+  level: 3
+  parent: TP-610
+  name: Rare-earth permanent magnets
+  candidates:
+  - E-015
+  - E-016
+  sources:
+  - https://www.neomaterials.com/
+- id: TP-990
+  level: 1
+  parent: TP-000
+  name: Component and turbopump test and qualification (service)
+  export_list:
+  - ECL-6-3
+  candidates:
+  - E-019
+  - E-029
+  sources:
+  - https://ca.finance.yahoo.com/news/canadian-company-build-countrys-first-153013394.html
+  - https://www.dlr.de/en/ra/about-us/departments/rocket-propulsion-systems/turbo-pump-technology
+  note: Public reports place domestic test capacity from 2028

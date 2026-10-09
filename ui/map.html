@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Canada Space Supply Chain Map</title>
+<!-- Handling: Unclassified — public (public build). SPDX-License-Identifier: Apache-2.0 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: control tower. Ink command bar, KPI rail, then a 12-column canvas: network + geography, coverage + path, parts explorer. */
+:root{
+  --bar:#17232B; --bar-fg:#E6EEF0; --bar-muted:#93A4AE;
+  --bg:#EEF2F3; --panel:#FFFFFF; --ink:#17232B; --ink2:#33434D; --muted:#5A6B78; --line:#D5DEE1; --hover:#E3F1F3;
+  --accent:#137A88;
+  --own-ca:#1F8A5B; --own-sub:#B7860B; --own-fo:#5B6FB5;
+  --st-ok:#1F8A5B; --st-warn:#C2621A; --st-crit:#D6295E;
+  --seq0:#E3F1F3; --seq1:#9CCFD6; --seq2:#4FA7B3; --seq3:#137A88;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bar:#0B1216; --bg:#11191E; --panel:#17232B; --ink:#E6EEF0; --ink2:#C3D0D6; --muted:#93A4AE; --line:#2C3B44; --hover:#1E3A40;
+  --accent:#4FB3C0; --own-ca:#2FA673; --own-sub:#C08A12; --own-fo:#6F86DB;
+  --st-ok:#2FA673; --st-warn:#E0823A; --st-crit:#F06A92;
+  --seq0:#1E2C33; --seq1:#1F5A63; --seq2:#2F8C99; --seq3:#5CC3CF; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bar:#0B1216; --bg:#11191E; --panel:#17232B; --ink:#E6EEF0; --ink2:#C3D0D6; --muted:#93A4AE; --line:#2C3B44; --hover:#1E3A40;
+  --accent:#4FB3C0; --own-ca:#2FA673; --own-sub:#C08A12; --own-fo:#6F86DB;
+  --st-ok:#2FA673; --st-warn:#E0823A; --st-crit:#F06A92;
+  --seq0:#1E2C33; --seq1:#1F5A63; --seq2:#2F8C99; --seq3:#5CC3CF; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:14px/1.5 var(--f-body);margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{background:var(--bar);color:var(--bar-fg);padding-inline:20px;padding-block:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px}
+.brand{font:800 13px/1 var(--f-display);letter-spacing:.16em;text-transform:uppercase;color:var(--bar-fg)}
+.brand span{color:var(--bar-muted);font-weight:500;letter-spacing:.08em}
+.top h1{font:700 18px/1.2 var(--f-display);margin:0;flex:1 1 260px}
+.badge{font:500 12px var(--f-mono);border:1px solid var(--bar-muted);color:var(--bar-fg);padding:3px 9px;white-space:nowrap}
+.badge.work{border-color:#F0B429;color:#F0B429}
+.wrap{max-width:1360px;margin:0 auto;padding-inline:20px;padding-block:18px 40px;display:grid;gap:16px}
+.wrap>*{min-width:0}
+.ctx{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline;font-size:13px;color:var(--muted)}
+.ctx b{color:var(--ink);font-weight:600}
+.filterbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.fchip{font:500 12.5px var(--f-body);background:var(--accent);color:var(--panel);border:0;padding:4px 10px;cursor:pointer}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.kpi{background:var(--panel);border:1px solid var(--line);padding:12px 14px;display:grid;gap:2px;align-content:start;position:relative}
+.kpi b{font:700 28px/1.05 var(--f-display);font-variant-numeric:tabular-nums}
+.kpi span{font-size:12.5px;color:var(--muted);line-height:1.35}
+.kpi.crit::before,.kpi.warn::before,.kpi.ok::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px}
+.kpi.crit::before{background:var(--st-crit)} .kpi.warn::before{background:var(--st-warn)} .kpi.ok::before{background:var(--st-ok)}
+.grid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:16px}
+.span8{grid-column:span 8}.span4{grid-column:span 4}.span6{grid-column:span 6}.span12{grid-column:span 12}
+@media (max-width:1000px){.span8,.span4,.span6{grid-column:span 12}}
+.panel{background:var(--panel);border:1px solid var(--line);padding:14px 16px;min-width:0}
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px;margin-bottom:8px}
+.ph h2{font:700 15.5px/1.25 var(--f-display);margin:0}
+.ph .hint{font-size:12px;color:var(--muted)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted);margin-top:6px}
+.sw{display:inline-block;width:10px;height:10px;margin-right:5px;vertical-align:-1px}
+.scroll{overflow-x:auto}
+svg text{font-family:var(--f-body)}
+.net .lnk{fill:none;stroke-opacity:.38;transition:stroke-opacity .15s}
+.net .lnk.dim{stroke-opacity:.06}.net .lnk.hi{stroke-opacity:.85}
+.net .node{cursor:pointer}
+.net .node text{font-size:11.5px;fill:var(--ink2)}
+.net .node.dim text{fill:var(--muted);opacity:.45}
+.net .node.sel text{font-weight:600;fill:var(--ink)}
+.carto .tile{cursor:pointer}
+.carto text{font-size:11px;pointer-events:none}
+.bars .row{cursor:pointer}
+.bars text{font-size:12px;fill:var(--ink2)}
+.bars .cnt{font:500 11.5px var(--f-mono);fill:var(--muted)}
+.lock{border:1px dashed var(--muted);padding:12px 14px;font-size:13.5px}
+.lock .k{font:500 11.5px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.gaplist{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px}
+.gaplist li{display:flex;gap:10px;align-items:baseline;font-size:13.5px;border-bottom:1px solid var(--line);padding-bottom:5px}
+.gaplist li .id{font:12px var(--f-mono);color:var(--muted)}
+.st{display:inline-flex;gap:5px;align-items:center;font:600 11.5px var(--f-body);white-space:nowrap}
+.st i{font-style:normal;display:inline-grid;place-items:center;width:14px;height:14px;font-size:10px;color:var(--panel)}
+.st.crit{color:var(--st-crit)}.st.crit i{background:var(--st-crit)}
+.st.warn{color:var(--st-warn)}.st.warn i{background:var(--st-warn)}
+.st.ok{color:var(--st-ok)}.st.ok i{background:var(--st-ok)}
+.own{font:500 11px var(--f-mono);padding:1px 6px;border:1px solid currentColor;white-space:nowrap}
+.own.ca{color:var(--own-ca)}.own.sub{color:var(--own-sub)}.own.fo{color:var(--own-fo)}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:10px}
+.chip{font:500 12.5px var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:4px 10px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+input[type=search]{font:13.5px var(--f-body);padding:5px 9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);flex:1 1 180px;max-width:280px;min-width:0}
+table{border-collapse:collapse;width:100%;font-size:13.5px}
+th{font:600 11px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+td.id{font:12px var(--f-mono);color:var(--muted);white-space:nowrap}
+tr.part{cursor:pointer} tr.part:hover td{background:var(--hover)}
+tr.detail td{background:var(--bg);font-size:13px}
+.ecl{font:500 11px var(--f-mono);color:var(--st-crit)}
+.cands{list-style:none;margin:0;padding:0;display:grid;gap:5px}
+.src{font:11.5px var(--f-mono);word-break:break-all}
+.muted{color:var(--muted)}
+.path{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0}
+.path span{font:500 12px var(--f-mono);border:1px solid var(--line);padding:3px 8px}
+.path span.hot{border-color:var(--st-crit);color:var(--st-crit)}
+.whatif{display:grid;grid-template-columns:auto 1fr auto;gap:8px 12px;align-items:center;margin-top:10px;font-size:13px}
+.whatif select,.whatif input{font:13px var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);padding:4px 6px;min-width:0}
+.big{font:700 34px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.tip{position:fixed;pointer-events:none;background:var(--bar);color:var(--bar-fg);font-size:12.5px;line-height:1.4;padding:7px 9px;max-width:280px;z-index:10;opacity:0;transition:opacity .1s}
+footer{font:12px/1.5 var(--f-mono);color:var(--muted);border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:4px 18px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="top">
+  <div class="brand">PHAROS Alpha <span id="tier">· open shell</span></div>
+  <h1>Canada Space Supply Chain Map</h1>
+  <span class="badge">Module: Turbopump</span>
+  <span class="badge" id="viewBadge">Public facts</span>
+</div>
+
+<div class="wrap">
+  <div class="ctx" id="ctx"></div>
+  <div class="filterbar" id="filterbar" hidden></div>
+
+  <section class="kpis" id="kpis" aria-label="Key figures"></section>
+
+  <div class="grid">
+    <section class="panel span8" aria-labelledby="netH">
+      <div class="ph"><h2 id="netH">Supply network: assemblies to candidate suppliers</h2><span class="hint">Line width = parts linked. Select a node to filter.</span></div>
+      <div class="scroll"><svg class="net" id="net" role="img" aria-label="Network of assemblies and candidate suppliers"></svg></div>
+      <div class="legend"><span><i class="sw" style="background:var(--own-ca)"></i>Canadian-owned</span><span><i class="sw" style="background:var(--own-sub)"></i>Canadian plant, foreign parent</span><span><i class="sw" style="background:var(--own-fo)"></i>Foreign</span><span><i class="sw" style="background:var(--st-crit)"></i>No candidate found</span></div>
+    </section>
+    <section class="panel span4" aria-labelledby="geoH">
+      <div class="ph"><h2 id="geoH">Where candidate capacity sits</h2><span class="hint">Entities by location</span></div>
+      <svg class="carto" id="carto" viewBox="0 0 400 330" role="img" aria-label="Entities by province and country"></svg>
+      <div class="legend" id="cartoLegend"></div>
+      <p class="muted" style="font-size:12px;margin:8px 0 0">Location is where the capability sits. Ownership is shown separately: a Canadian plant can have a foreign parent.</p>
+    </section>
+
+    <section class="panel span6" aria-labelledby="covH">
+      <div class="ph"><h2 id="covH">Coverage by assembly</h2><span class="hint">Parts in each assembly, by status</span></div>
+      <svg class="bars" id="bars" role="img" aria-label="Coverage by assembly"></svg>
+      <div class="legend"><span><i class="sw" style="background:var(--st-ok)"></i>Canadian-owned candidate</span><span><i class="sw" style="background:var(--st-warn)"></i>Candidates, none Canadian-owned</span><span><i class="sw" style="background:var(--st-crit)"></i>No candidate found</span></div>
+    </section>
+    <section class="panel span6" id="right6" aria-labelledby="r6H"></section>
+
+    <section class="panel span12" aria-labelledby="exH">
+      <div class="ph"><h2 id="exH">Parts explorer</h2><span class="hint" id="exHint">41 parts</span></div>
+      <div class="toolbar">
+        <button class="chip" data-f="all" aria-pressed="true">All</button>
+        <button class="chip" data-f="no_candidate" aria-pressed="false">No candidate</button>
+        <button class="chip" data-f="no_canadian_owned_candidate" aria-pressed="false">None Canadian-owned</button>
+        <button class="chip" data-f="covered" aria-pressed="false">Canadian-owned candidate</button>
+        <button class="chip" data-f="ecl" aria-pressed="false">Export-listed</button>
+        <input type="search" id="q" placeholder="Search parts or companies" aria-label="Search parts or companies">
+      </div>
+      <div class="scroll"><table id="tbl"><thead><tr id="thead"></tr></thead><tbody></tbody></table></div>
+    </section>
+  </div>
+
+  <footer><span>Element Ventures (Canada) Ltd.</span><span id="foot-h">Handling: Unclassified — public</span><span>Apache-2.0</span><span id="foot-asof"></span><span>Candidates are public-capability matches, not verified suppliers.</span></footer>
+</div>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+window.TP_DATA = {"tp": {"module": "turbopump", "as_of": "2026-10-08", "reference": {"description": "Launch Canada turbopump programme (public): electric drive in Phases 1-2, gas-generator turbopump in Phase 3", "sources": ["https://www.launchcanada.org/special-projects", "https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"]}, "summary": {"parts": 41, "parts_with_candidate": 33, "parts_no_candidate": 8, "parts_no_canadian_owned_candidate": 25, "parts_export_listed": 6, "entities": 28, "entities_by_ownership": {"Canadian": 10, "Foreign": 11, "Canadian subsidiary of foreign parent": 7}, "entities_by_source": {"launch_canada_public_statement": 8, "public_record": 20}}, "parts": [{"id": "TP-000", "level": 0, "parent": null, "name": "Turbopump assembly", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://www.launchcanada.org/special-projects"]}, {"id": "TP-100", "level": 1, "parent": "TP-000", "name": "Fuel (RP-1) pump assembly", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}, {"id": "E-002", "name": "EOS GmbH", "ownership_class": "Foreign", "country": "DE"}], "candidate_count": 2, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"]}, {"id": "TP-110", "level": 2, "parent": "TP-100", "name": "Fuel inducer", "export_list": [], "candidates": [{"id": "E-002", "name": "EOS GmbH", "ownership_class": "Foreign", "country": "DE"}, {"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-120", "level": 2, "parent": "TP-100", "name": "Fuel impeller", "export_list": [], "candidates": [{"id": "E-002", "name": "EOS GmbH", "ownership_class": "Foreign", "country": "DE"}, {"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-130", "level": 2, "parent": "TP-100", "name": "Fuel volute / housing", "export_list": [], "candidates": [{"id": "E-002", "name": "EOS GmbH", "ownership_class": "Foreign", "country": "DE"}, {"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-013", "name": "Magellan Aerospace", "ownership_class": "Canadian", "country": "CA"}, {"id": "E-020", "name": "Linamar Corporation", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 4, "canadian_owned_candidates": 2, "gap": null, "note": null, "sources": []}, {"id": "TP-140", "level": 2, "parent": "TP-100", "name": "Wear rings / diffuser", "export_list": [], "candidates": [{"id": "E-020", "name": "Linamar Corporation", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-200", "level": 1, "parent": "TP-000", "name": "LOX pump assembly", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf"]}, {"id": "TP-210", "level": 2, "parent": "TP-200", "name": "LOX inducer", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-220", "level": 2, "parent": "TP-200", "name": "LOX impeller", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-230", "level": 2, "parent": "TP-200", "name": "LOX volute / housing", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-013", "name": "Magellan Aerospace", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-240", "level": 2, "parent": "TP-200", "name": "LOX pump motor (Phase 2)", "export_list": [], "candidates": [{"id": "E-022", "name": "Dana TM4", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"]}, {"id": "TP-300", "level": 1, "parent": "TP-000", "name": "Turbine assembly", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-310", "level": 2, "parent": "TP-300", "name": "Turbine blisk", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"]}, {"id": "TP-320", "level": 2, "parent": "TP-300", "name": "Turbine nozzle / stator", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-330", "level": 2, "parent": "TP-300", "name": "Turbine manifold / exhaust housing", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-400", "level": 1, "parent": "TP-000", "name": "Rotor, bearing and seal system", "export_list": [], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-410", "level": 2, "parent": "TP-400", "name": "Main shaft", "export_list": [], "candidates": [{"id": "E-020", "name": "Linamar Corporation", "ownership_class": "Canadian", "country": "CA"}, {"id": "E-013", "name": "Magellan Aerospace", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 2, "gap": null, "note": null, "sources": []}, {"id": "TP-420", "level": 2, "parent": "TP-400", "name": "Cryogenic bearings", "export_list": [], "candidates": [{"id": "E-003", "name": "Undisclosed German bearing developer", "ownership_class": "Foreign", "country": "DE"}, {"id": "E-005", "name": "Carter Manufacturing Ltd (Carter Bearings)", "ownership_class": "Foreign", "country": "GB"}, {"id": "E-024", "name": "Cerobear (MinebeaMitsumi)", "ownership_class": "Foreign", "country": "DE"}], "candidate_count": 3, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://product.minebeamitsumi.com/en/product/category/bearing/cerobear/index.html"]}, {"id": "TP-430", "level": 2, "parent": "TP-400", "name": "Dynamic seals", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": ["https://extapps.ksc.nasa.gov/reliability/Documents/Preferred_Practices/1269.pdf"]}, {"id": "TP-440", "level": 2, "parent": "TP-400", "name": "Balance piston / thrust balance", "export_list": [], "candidates": [{"id": "E-020", "name": "Linamar Corporation", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-450", "level": 2, "parent": "TP-400", "name": "High-speed rotor balancing (service)", "export_list": [], "candidates": [{"id": "E-020", "name": "Linamar Corporation", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": []}, {"id": "TP-500", "level": 1, "parent": "TP-000", "name": "Gas generator assembly (Phase 3)", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://www.launchcanada.org/special-projects"]}, {"id": "TP-510", "level": 2, "parent": "TP-500", "name": "GG injector", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-520", "level": 2, "parent": "TP-500", "name": "GG chamber", "export_list": [], "candidates": [{"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-530", "level": 2, "parent": "TP-500", "name": "Igniter", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": []}, {"id": "TP-600", "level": 1, "parent": "TP-000", "name": "Electric drive (Phases 1-2 test configuration)", "export_list": [], "candidates": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"]}, {"id": "TP-610", "level": 2, "parent": "TP-600", "name": "High-speed permanent-magnet motor", "export_list": [], "candidates": [{"id": "E-022", "name": "Dana TM4", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"]}, {"id": "TP-620", "level": 2, "parent": "TP-600", "name": "Inverter / motor controller", "export_list": [], "candidates": [{"id": "E-022", "name": "Dana TM4", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-700", "level": 1, "parent": "TP-000", "name": "Propellant and GG valves", "export_list": [], "candidates": [{"id": "E-028", "name": "Moog Inc.", "ownership_class": "Foreign", "country": "US"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": []}, {"id": "TP-710", "level": 2, "parent": "TP-700", "name": "Instrumentation", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": []}, {"id": "TP-800", "level": 1, "parent": "TP-000", "name": "Fasteners", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": ["https://www.smartindunews.com/news/Latest_Sector_News/Aerospace_Components_Shortages_Are_Reshaping_Lead_Times.html"]}, {"id": "TP-810", "level": 2, "parent": "TP-800", "name": "Static seals / gaskets", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": []}, {"id": "TP-910", "level": 3, "parent": "TP-220", "name": "Nickel superalloy powder (additive)", "export_list": [], "candidates": [{"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://www.voxelmatters.directory/company/advance-powders/"]}, {"id": "TP-920", "level": 3, "parent": "TP-120", "name": "Titanium alloy powder (additive)", "export_list": [], "candidates": [{"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-012", "name": "Tekna Plasma Systems", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://3dprintingindustry.com/news/tekna-defeats-colibrium-additives-apc-in-metal-powder-patent-dispute-231352/"]}, {"id": "TP-930", "level": 3, "parent": "TP-310", "name": "Nickel superalloy bar / forging stock", "export_list": [], "candidates": [{"id": "E-027", "name": "Special Metals Corp. (Precision Castparts)", "ownership_class": "Foreign", "country": "US"}], "candidate_count": 1, "canadian_owned_candidates": 0, "gap": "no_canadian_owned_candidate", "note": null, "sources": ["https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"]}, {"id": "TP-940", "level": 3, "parent": "TP-130", "name": "Titanium billet / bar", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": ["https://www.argusmedia.com/en/news-and-insights/latest-market-news/2860247-jet-engines-driving-nickel-pq-titanium-demand"]}, {"id": "TP-950", "level": 3, "parent": "TP-410", "name": "Stainless and bearing steels", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": ["https://www.bcg.com/publications/2024/fixing-aerospaces-supply-chain-for-casting-and-forging"]}, {"id": "TP-960", "level": 3, "parent": "TP-130", "name": "Aluminium casting alloy", "export_list": [], "candidates": [{"id": "E-023", "name": "Rio Tinto Canada (Aluminium)", "ownership_class": "Canadian subsidiary of foreign parent", "country": "CA"}, {"id": "E-013", "name": "Magellan Aerospace", "ownership_class": "Canadian", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://www.newswire.ca/news-releases/magellan-aerospace-becomes-aeromet-a20x-advanced-aluminium-foundry-licensee-697617541.html"]}, {"id": "TP-970", "level": 3, "parent": "TP-420", "name": "Ceramic bearing ball blanks", "export_list": [], "candidates": [], "candidate_count": 0, "canadian_owned_candidates": 0, "gap": "no_candidate", "note": null, "sources": []}, {"id": "TP-980", "level": 3, "parent": "TP-610", "name": "Rare-earth permanent magnets", "export_list": [], "candidates": [{"id": "E-015", "name": "Neo Performance Materials", "ownership_class": "Canadian", "country": "EE"}, {"id": "E-016", "name": "REalloys Inc.", "ownership_class": "Foreign", "country": "CA"}], "candidate_count": 2, "canadian_owned_candidates": 1, "gap": null, "note": null, "sources": ["https://www.neomaterials.com/"]}, {"id": "TP-990", "level": 1, "parent": "TP-000", "name": "Component and turbopump test and qualification (service)", "export_list": ["ECL-6-3"], "candidates": [{"id": "E-019", "name": "Canada Rocket Company", "ownership_class": "Canadian", "country": "CA"}, {"id": "E-029", "name": "DLR Institute of Space Propulsion", "ownership_class": "Foreign", "country": "DE"}], "candidate_count": 2, "canadian_owned_candidates": 1, "gap": null, "note": "Public reports place domestic test capacity from 2028", "sources": ["https://ca.finance.yahoo.com/news/canadian-company-build-countrys-first-153013394.html", "https://www.dlr.de/en/ra/about-us/departments/rocket-propulsion-systems/turbo-pump-technology"]}], "entities": [{"id": "E-001", "name": "Launch Canada (Launch Canada Rocketry Association)", "role": "design_authority", "source_type": "launch_canada_public_statement", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "Turbopump R&D programme owner; Phase 1 electric fuel pump, Phase 2 electric LOX pump, Phase 3 gas-generator turbopump", "evidence_grade": "reported", "citability": "P", "sources": ["https://www.launchcanada.org/special-projects", "https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-002", "name": "EOS GmbH", "role": "supplier", "source_type": "launch_canada_public_statement", "ownership_class": "Foreign", "parent_jurisdiction": "DE", "location": {"country": "DE"}, "capability": "Laser powder bed fusion machines; printed titanium pump components and trained the team in design for additive manufacturing", "evidence_grade": "reported", "citability": "AS", "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-003", "name": "Undisclosed German bearing developer", "role": "supplier", "source_type": "launch_canada_public_statement", "ownership_class": "Foreign", "parent_jurisdiction": "DE", "location": {"country": "DE"}, "capability": "Developing ceramic-matrix-composite bearings; modified fuel pump being built to test them", "identity_known": false, "evidence_grade": "reported", "citability": "AS", "sources": ["https://spaceq.ca/launch-canada-turbopump-ip-for-profit-arm/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-004", "name": "SoftInWay Inc.", "role": "tooling", "source_type": "launch_canada_public_statement", "ownership_class": "Foreign", "parent_jurisdiction": "US", "location": {"country": "US"}, "capability": "AxSTREAM turbomachinery design and rotor-dynamics software and training", "evidence_grade": "confirmed", "citability": "P", "sources": ["https://www.softinway.com/softinway-supports-next-generation-of-rocketry-engineers-through-new-partnership-with-launch-canada/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-005", "name": "Carter Manufacturing Ltd (Carter Bearings)", "role": "supplier", "source_type": "launch_canada_public_statement", "ownership_class": "Foreign", "parent_jurisdiction": "GB", "location": {"country": "GB"}, "capability": "Bearings for the first student-developed cryogenic turbopump (sponsor)", "evidence_grade": "confirmed", "citability": "P", "sources": ["https://www.carterbearings.co.uk/carter-americas-sponsors-launch-of-rocket-propulsion-in-canada/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-007", "name": "Pratt & Whitney Canada", "role": "talent_and_capability", "source_type": "launch_canada_public_statement", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "US", "ultimate_parent": "RTX Corporation", "location": {"country": "CA", "region": "QC"}, "capability": "Turbomachinery workforce (several Launch Canada volunteers); gas turbines and fuel systems", "evidence_grade": "reported", "citability": "AS", "sources": ["https://spaceq.ca/from-competition-to-rd-launch-canada-to-build-critical-turbopump-tech/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-008", "name": "Canadian Space Agency (Space Technology Development Program)", "role": "funder", "source_type": "launch_canada_public_statement", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": "QC"}, "capability": "Funder of agreement 25STDPY20, a prototype reusable semi-cryogenic turbopump", "evidence_grade": "confirmed", "citability": "P", "sources": ["https://search.open.canada.ca/grants/record/csa-asc%2C003-2025-2026-Q2-00033%2Ccurrent"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-009", "name": "Government of Canada (Launch the North)", "role": "funder", "source_type": "launch_canada_public_statement", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "C$1.2M workforce-stream award to Launch Canada; expands special projects such as the turbopump", "evidence_grade": "reported", "citability": "AS", "sources": ["https://spaceq.ca/launch-canada-funding-1-2m-dnd-rocketry-training/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-010", "name": "Burloak Technologies (i3D Manufacturing)", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "UNVERIFIED", "ultimate_parent": "Not verified (public reports name i3D Manufacturing as acquirer)", "location": {"country": "CA", "region": true}, "capability": "Metal additive manufacturing (LPBF, E-PBF), HIP, heat treatment, CNC finishing; Inconel, titanium, aluminium", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.metal-am.com/i3d-manufacturing-acquires-burloak-technologies/", "https://aiac.ca/members/burloak-technologies-inc/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-011", "name": "AP&C (Colibrium Additive, GE Aerospace) / GE Additive Canada", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "US", "ultimate_parent": "GE Aerospace", "location": {"country": "CA", "region": "QC"}, "capability": "Plasma-atomized titanium and nickel-718 powders; metal additive manufacturing", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.voxelmatters.directory/company/advance-powders/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-012", "name": "Tekna Plasma Systems", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "UNVERIFIED", "location": {"country": "CA", "region": "QC"}, "capability": "Plasma-atomized metal powders (titanium alloys)", "evidence_grade": "reported", "citability": "AS", "sources": ["https://3dprintingindustry.com/news/tekna-defeats-colibrium-additives-apc-in-metal-powder-patent-dispute-231352/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-013", "name": "Magellan Aerospace", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "Aerospace sand castings (Haley, ON) including pump housings; A20X aluminium licensee; engine shafts (Haverhill, US)", "evidence_grade": "reported", "citability": "P", "sources": ["https://magellan.aero/location/magellan-aerospace-haley/", "https://www.newswire.ca/news-releases/magellan-aerospace-becomes-aeromet-a20x-advanced-aluminium-foundry-licensee-697617541.html"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-014", "name": "Bristol Aerospace (Magellan division)", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": "MB"}, "capability": "Domestic solid-propellant rocket motors and propulsion manufacturing", "evidence_grade": "reported", "citability": "AS", "sources": ["https://en.wikipedia.org/wiki/Bristol_Aerospace"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-015", "name": "Neo Performance Materials", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "EE", "note": "Toronto HQ; magnet plant in Narva, Estonia"}, "capability": "Sintered NdFeB permanent magnets", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.neomaterials.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-016", "name": "REalloys Inc.", "role": "supplier", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "US", "location": {"country": "CA", "region": "SK", "note": "metal in SK; magnets in Ohio, US"}, "capability": "NdFeB magnet alloy and sintered magnets (production 2027)", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.realloys.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-017", "name": "NordSpace", "role": "demand", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "Launch-vehicle developer; Launch the North Stream 1 awardee; potential turbopump customer", "evidence_grade": "reported", "citability": "AS", "sources": ["https://nordspace.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-018", "name": "Reaction Dynamics", "role": "demand", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": "QC"}, "capability": "Launch-vehicle developer; Launch the North Stream 1 awardee; potential turbopump customer", "evidence_grade": "reported", "citability": "AS", "sources": ["https://reactiondynamics.space/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-019", "name": "Canada Rocket Company", "role": "test_capacity", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "Launch-vehicle developer; Jeremy Hansen Test Facility (London, ON), engine test stands expected fully operational by 2028", "available_from": "2028-01-01", "evidence_grade": "reported", "citability": "AS", "sources": ["https://ca.finance.yahoo.com/news/canadian-company-build-countrys-first-153013394.html"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-020", "name": "Linamar Corporation", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian", "parent_jurisdiction": "CA", "location": {"country": "CA", "region": true}, "capability": "High-volume precision machining, forging, high- and low-pressure die casting; eAxle integration", "evidence_grade": "reported", "citability": "AS", "sources": ["https://electricautonomy.ca/ev-supply-chain/manufacturing/2025-01-28/linamar-ev-investment-guelph-ontario/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-021", "name": "Stackpole International", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "HK", "ultimate_parent": "Johnson Electric", "location": {"country": "CA", "region": true}, "capability": "Automotive oil and transmission pumps; powder-metal rotors", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.crestview.com/news/18"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-022", "name": "Dana TM4", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "US", "ultimate_parent": "Dana Incorporated", "location": {"country": "CA", "region": "QC"}, "capability": "Permanent-magnet motors and inverters", "evidence_grade": "reported", "citability": "P", "sources": ["https://www.dana.com/newsroom/press-releases/dana-delivers-superior-torque-longer-range-for-light-vehicles-through-its-enhanced-tm4-motive-motor-and-inverter/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-023", "name": "Rio Tinto Canada (Aluminium)", "role": "supplier", "source_type": "public_record", "ownership_class": "Canadian subsidiary of foreign parent", "parent_jurisdiction": "GB", "ultimate_parent": "Rio Tinto Group", "location": {"country": "CA", "region": "QC"}, "capability": "Primary aerospace-grade aluminium", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.riotinto.com/en/can"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-024", "name": "Cerobear (MinebeaMitsumi)", "role": "supplier", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "JP", "location": {"country": "DE"}, "capability": "Custom hybrid and all-ceramic bearings with SSME turbopump heritage", "evidence_grade": "confirmed", "citability": "P", "sources": ["https://product.minebeamitsumi.com/en/product/category/bearing/cerobear/index.html"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-025", "name": "Barber-Nichols", "role": "allied_reference", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "US", "location": {"country": "US"}, "capability": "Rocket turbopump design and build (benchmark design authority)", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.barber-nichols.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-026", "name": "Concepts NREC", "role": "allied_reference", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "US", "location": {"country": "US"}, "capability": "Rocket turbopump design (qualified alternate design authority)", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.conceptsnrec.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-027", "name": "Special Metals Corp. (Precision Castparts)", "role": "supplier", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "US", "ultimate_parent": "Berkshire Hathaway", "location": {"country": "US"}, "capability": "Inconel 718 originator; superalloy bar and forging stock", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.specialmetals.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-028", "name": "Moog Inc.", "role": "supplier", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "US", "location": {"country": "US"}, "capability": "Engine control valves, cryogenic components, propellant feed systems", "evidence_grade": "reported", "citability": "AS", "sources": ["https://www.moog.com/"], "as_of": "2026-10-08", "synthetic": false}, {"id": "E-029", "name": "DLR Institute of Space Propulsion", "role": "test_capacity", "source_type": "public_record", "ownership_class": "Foreign", "parent_jurisdiction": "DE", "location": {"country": "DE"}, "capability": "Modular turbopump test bench (750 kW, 65,000 rpm, LOX/methane/LH2) and cryogenic bearing and seal bench", "evidence_grade": "confirmed", "citability": "P", "sources": ["https://www.dlr.de/en/ra/about-us/departments/rocket-propulsion-systems/turbo-pump-technology"], "as_of": "2026-10-08", "synthetic": false}], "assessment": null, "assessment_note": "Assessment: not available in the public tier"}, "trace": {"serials": [{"id": "ser-1007", "serial": "R-100-0007", "synthetic": true, "design": "R-100 rev B", "ordered": true, "steps": [{"id": "stp-1701", "kind": "build", "evidence": true}, {"id": "stp-1702", "kind": "stress_relief", "evidence": true}, {"id": "stp-1703", "kind": "hip", "evidence": true}, {"id": "stp-1704", "kind": "heat_treatment", "evidence": true}, {"id": "stp-1705", "kind": "machining", "evidence": true}, {"id": "stp-1706", "kind": "cleaning", "evidence": true}, {"id": "stp-1707", "kind": "inspection", "evidence": true}, {"id": "stp-1708", "kind": "assembly", "evidence": true}], "with_evidence": 8, "missing_evidence": []}, {"id": "ser-1008", "serial": "R-100-0008", "synthetic": true, "design": "R-100 rev B", "ordered": true, "steps": [{"id": "stp-1806", "kind": "cleaning", "evidence": false}], "with_evidence": 0, "missing_evidence": ["stp-1806"]}], "synthetic_critical_items": [{"id": "cri-1001", "name": "Single-source feedstock lot", "targets": ["lot-1001"], "single_source": true, "qualified_alternate": false, "missing_evidence": false}, {"id": "cri-1002", "name": "Seal housing finishing, alternate qualified", "targets": ["cmp-1002"], "single_source": false, "qualified_alternate": true, "missing_evidence": false}, {"id": "cri-1003", "name": "Cleaning record missing for R-100-0008", "targets": ["stp-1806"], "single_source": false, "qualified_alternate": false, "missing_evidence": true}], "assessment": null, "assessment_note": "Assessment: not available in the public tier"}};
+(function(){
+const D = window.TP_DATA, T = D.tp, O = D.overlay || null, S = T.summary;
+const $ = s => document.querySelector(s);
+const NS = 'http://www.w3.org/2000/svg';
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const ents = Object.fromEntries(T.entities.map(e => [e.id, e]));
+const parts = Object.fromEntries(T.parts.map(p => [p.id, p]));
+const kids = {}; T.parts.forEach(p => { if (p.parent) (kids[p.parent] = kids[p.parent] || []).push(p.id); });
+const ownKey = o => o === 'Canadian' ? 'ca' : (o.startsWith('Canadian subsidiary') ? 'sub' : 'fo');
+const ownLbl = {ca:'Canadian-owned', sub:'CA plant, foreign parent', fo:'Foreign'};
+const ownVar = {ca:'--own-ca', sub:'--own-sub', fo:'--own-fo'};
+const stKey = p => p.gap === 'no_candidate' ? 'crit' : p.gap ? 'warn' : 'ok';
+const stHtml = p => ({crit:'<span class="st crit"><i>✕</i>No candidate</span>', warn:'<span class="st warn"><i>!</i>None Canadian-owned</span>', ok:'<span class="st ok"><i>✓</i>Canadian-owned</span>'})[stKey(p)];
+const subtree = id => [id, ...(kids[id] || []).flatMap(subtree)];
+const assemblies = T.parts.filter(p => p.level === 1);
+const asmOf = {}; assemblies.forEach(a => subtree(a.id).forEach(i => asmOf[i] = a.id)); asmOf['TP-000'] = 'TP-000';
+const tip = $('#tip');
+function showTip(e, html){ tip.innerHTML = html; tip.style.opacity = 1; const x = Math.min(e.clientX + 14, innerWidth - 300); tip.style.left = x + 'px'; tip.style.top = (e.clientY + 14) + 'px'; }
+function hideTip(){ tip.style.opacity = 0; }
+
+// ---------- state & cross-filter ----------
+const state = { sel: null };   // {kind:'asm'|'ent'|'loc'|'none', id, label}
+function selParts(){
+  if (!state.sel) return null;
+  const s = state.sel;
+  if (s.kind === 'asm') return new Set(subtree(s.id));
+  if (s.kind === 'none') return new Set(T.parts.filter(p => p.gap === 'no_candidate').map(p => p.id));
+  if (s.kind === 'ent') return new Set(T.parts.filter(p => p.candidates.some(c => c.id === s.id)).map(p => p.id));
+  if (s.kind === 'loc') return new Set(T.parts.filter(p => p.candidates.some(c => locKey(ents[c.id]) === s.id)).map(p => p.id));
+}
+function setSel(sel){ state.sel = (state.sel && sel && state.sel.kind === sel.kind && state.sel.id === sel.id) ? null : sel; renderAll(); }
+function renderFilterbar(){
+  const fb = $('#filterbar'); fb.hidden = !state.sel;
+  if (state.sel) fb.innerHTML = `<span class="muted" style="font-size:12.5px">Filtered by</span><button class="fchip" id="clr" aria-label="Clear filter">${esc(state.sel.label)} ✕</button>`;
+  const b = $('#clr'); if (b) b.onclick = () => setSel(null);
+}
+
+// ---------- header ----------
+$('#ctx').innerHTML = `<span>Reference: <b>${esc(T.reference.description)}</b></span><span>Data as of <b>${esc(T.as_of)}</b></span><span>${S.entities} public-record entities · every record cited</span>`;
+$('#foot-asof').textContent = 'Data as of ' + T.as_of;
+if (O) { $('#tier').textContent = '· DRDC / Launch Canada working view'; $('#viewBadge').textContent = 'Working view · not for public release'; $('#viewBadge').classList.add('work'); $('#foot-h').textContent = O.handling; }
+
+// ---------- KPIs ----------
+const noCA = S.parts_no_canadian_owned_candidate - S.parts_no_candidate, covered = S.parts - S.parts_no_canadian_owned_candidate;
+const kpi = (n, l, c='') => `<div class="kpi ${c}"><b>${n}</b><span>${l}</span></div>`;
+$('#kpis').innerHTML = kpi(S.parts, 'parts mapped across ' + assemblies.length + ' assemblies') + kpi(S.parts_no_candidate, 'no candidate found', 'crit') +
+  kpi(noCA, 'candidates found, none Canadian-owned', 'warn') + kpi(Math.round(100 * covered / S.parts) + '%', `of parts have a Canadian-owned candidate (${covered})`, 'ok') +
+  kpi(S.parts_export_listed, 'export-listed assemblies (ECL 6-3)') + kpi(`${S.entities_by_ownership['Canadian'] || 0}/${S.entities}`, 'entities Canadian-owned');
+
+// ---------- network ----------
+const entOrder = T.entities.slice().sort((a, b) => ['ca','sub','fo'].indexOf(ownKey(a.ownership_class)) - ['ca','sub','fo'].indexOf(ownKey(b.ownership_class)) || a.name.localeCompare(b.name));
+const linkW = {}; // asm|ent -> parts
+for (const p of T.parts) { const a = asmOf[p.id]; if (a === 'TP-000') continue;
+  if (!p.candidates.length) linkW[a + '|NONE'] = (linkW[a + '|NONE'] || 0) + 1;
+  for (const c of p.candidates) linkW[a + '|' + c.id] = (linkW[a + '|' + c.id] || 0) + 1; }
+const usedEnts = entOrder.filter(e => Object.keys(linkW).some(k => k.endsWith('|' + e.id)));
+function renderNet(){
+  const svg = $('#net'), rowH = 21, top = 14, W = 820, lx = 210, rx = 560;
+  const rightN = usedEnts.length + 1, H = top * 2 + rightN * rowH + 10;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.width = '100%'; svg.style.minWidth = '640px';
+  const ly = {}, ry = {};
+  const asmGap = (H - top * 2) / assemblies.length;
+  assemblies.forEach((a, i) => ly[a.id] = top + asmGap * (i + .5));
+  usedEnts.forEach((e, i) => ry[e.id] = top + rowH * (i + .5) + (ownKey(e.ownership_class) !== 'ca' ? 4 : 0) + (ownKey(e.ownership_class) === 'fo' ? 4 : 0));
+  ry.NONE = top + rowH * (usedEnts.length + .5) + 18;
+  const sp = selParts(); const s = state.sel;
+  const relevant = (a, t) => !s || (s.kind === 'asm' && s.id === a) || (s.kind === 'ent' && s.id === t) || (s.kind === 'none' && t === 'NONE') ||
+     (s.kind === 'loc' && t !== 'NONE' && locKey(ents[t]) === s.id);
+  let h = '';
+  for (const [k, w] of Object.entries(linkW)) { const [a, t] = k.split('|');
+    const col = t === 'NONE' ? css('--st-crit') : css(ownVar[ownKey(ents[t].ownership_class)]);
+    const y1 = ly[a], y2 = ry[t], mx = (lx + rx) / 2;
+    const cls = s ? (relevant(a, t) ? 'hi' : 'dim') : '';
+    h += `<path class="lnk ${cls}" data-a="${a}" data-t="${t}" d="M${lx},${y1} C${mx},${y1} ${mx},${y2} ${rx},${y2}" stroke="${col}" stroke-width="${1.5 + w * 1.6}"><title>${esc(parts[a].name)} → ${t === 'NONE' ? 'no candidate' : esc(ents[t].name)}: ${w} part${w > 1 ? 's' : ''}</title></path>`; }
+  for (const a of assemblies) { const on = !s || relevant(a.id, null) || (s.kind !== 'asm' && Object.keys(linkW).some(k => k.startsWith(a.id + '|') && relevant(a.id, k.split('|')[1])));
+    h += `<g class="node ${on ? '' : 'dim'} ${s && s.kind === 'asm' && s.id === a.id ? 'sel' : ''}" data-kind="asm" data-id="${a.id}" tabindex="0" role="button" aria-label="${esc(a.name)}">
+      <rect x="${lx - 6}" y="${ly[a.id] - 9}" width="6" height="18" fill="${css('--ink2')}"/><text x="${lx - 12}" y="${ly[a.id] + 4}" text-anchor="end">${esc(a.name.length > 30 ? a.name.slice(0, 29) + '…' : a.name)}</text></g>`; }
+  for (const e of usedEnts) { const k = ownKey(e.ownership_class); const on = !s || Object.keys(linkW).some(x => x.endsWith('|' + e.id) && relevant(x.split('|')[0], e.id));
+    const nm = e.name.length > 34 ? e.name.slice(0, 33) + '…' : e.name;
+    h += `<g class="node ${on ? '' : 'dim'} ${s && s.kind === 'ent' && s.id === e.id ? 'sel' : ''}" data-kind="ent" data-id="${e.id}" tabindex="0" role="button" aria-label="${esc(e.name)}">
+      <rect x="${rx}" y="${ry[e.id] - 7}" width="6" height="14" fill="${css(ownVar[k])}"/><text x="${rx + 12}" y="${ry[e.id] + 4}">${esc(nm)}</text></g>`; }
+  h += `<g class="node ${!s || s.kind === 'none' || s.kind === 'asm' ? '' : 'dim'} ${s && s.kind === 'none' ? 'sel' : ''}" data-kind="none" data-id="NONE" tabindex="0" role="button" aria-label="No candidate found">
+    <rect x="${rx}" y="${ry.NONE - 7}" width="6" height="14" fill="${css('--st-crit')}"/><text x="${rx + 12}" y="${ry.NONE + 4}" style="fill:var(--st-crit);font-weight:600">No candidate found (${S.parts_no_candidate} parts)</text></g>`;
+  svg.innerHTML = h;
+  svg.querySelectorAll('.node').forEach(n => { const go = () => { const k = n.dataset.kind, id = n.dataset.id;
+      setSel({kind: k, id, label: k === 'asm' ? parts[id].name : k === 'ent' ? ents[id].name : 'No candidate found'}); };
+    n.onclick = go; n.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
+    n.onmousemove = ev => { const k = n.dataset.kind, id = n.dataset.id;
+      if (k === 'ent') { const e = ents[id]; showTip(ev, `<b>${esc(e.name)}</b><br>${ownLbl[ownKey(e.ownership_class)]}${e.ultimate_parent ? ' · parent ' + esc(e.ultimate_parent) : ''}<br>${esc(e.capability)}`); }
+      else if (k === 'asm') { const ps = subtree(id).map(i => parts[i]); showTip(ev, `<b>${esc(parts[id].name)}</b><br>${ps.length} parts · ${ps.filter(p => p.gap === 'no_candidate').length} with no candidate`); }
+      else showTip(ev, '<b>No candidate found</b><br>No public record of a company with the capability.'); };
+    n.onmouseleave = hideTip; });
+}
+
+// ---------- cartogram ----------
+const TILES = {YT:[1,0],NT:[2,0],NU:[3,0],BC:[0,1],AB:[1,1],SK:[2,1],MB:[3,1],ON:[4,1],QC:[5,1],NL:[6,1],NB:[5,2],PE:[6,2],NS:[7,2]};
+const FOREIGN = ['US','GB','DE','EE','JP','HK'];
+const locKey = e => e.location.country === 'CA' ? (e.location.region || 'CA') : e.location.country;
+const locCount = {}; T.entities.forEach(e => { const k = locKey(e); locCount[k] = (locCount[k] || 0) + 1; });
+function renderCarto(){
+  const svg = $('#carto'), sz = 44, g = 4, ox = 12, oy = 26; const max = Math.max(...Object.values(locCount));
+  const fill = n => !n ? css('--seq0') : n >= 6 ? css('--seq3') : n >= 3 ? css('--seq2') : css('--seq1');
+  const txt = n => n >= 3 ? css('--panel') : css('--ink');
+  const s = state.sel;
+  let h = `<text x="${ox}" y="16" style="fill:var(--muted);font-weight:600;letter-spacing:.08em">CANADA</text>`;
+  const tile = (k, x, y) => { const n = locCount[k] || 0; const sel = s && s.kind === 'loc' && s.id === k;
+    return `<g class="tile" data-k="${k}" tabindex="${n ? 0 : -1}" role="button" aria-label="${k}: ${n} entities">
+      <rect x="${x}" y="${y}" width="${sz}" height="${sz}" fill="${fill(n)}" stroke="${sel ? css('--ink') : 'none'}" stroke-width="2"/>
+      <text x="${x + 5}" y="${y + 15}" style="fill:${txt(n)};font-weight:600">${k}</text>
+      <text x="${x + sz - 5}" y="${y + sz - 6}" text-anchor="end" style="fill:${txt(n)};font-family:var(--f-mono)">${n || ''}</text></g>`; };
+  for (const [k, [c, r]] of Object.entries(TILES)) h += tile(k, ox + c * (sz + g), oy + r * (sz + g));
+  const fy = oy + 3 * (sz + g) + 34;
+  h += `<text x="${ox}" y="${fy - 10}" style="fill:var(--muted);font-weight:600;letter-spacing:.08em">ALLIED AND OTHER</text>`;
+  FOREIGN.forEach((k, i) => h += tile(k, ox + i * (sz + g), fy));
+  svg.innerHTML = h;
+  svg.querySelectorAll('.tile').forEach(t => { const k = t.dataset.k, n = locCount[k] || 0; if (!n) return;
+    const go = () => setSel({kind:'loc', id:k, label:'Located in ' + k});
+    t.onclick = go; t.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
+    t.onmousemove = ev => showTip(ev, `<b>${k}</b>: ${n} entit${n > 1 ? 'ies' : 'y'}<br>` + T.entities.filter(e => locKey(e) === k).map(e => esc(e.name)).join('<br>'));
+    t.onmouseleave = hideTip; });
+  $('#cartoLegend').innerHTML = `<span><i class="sw" style="background:var(--seq1)"></i>1–2</span><span><i class="sw" style="background:var(--seq2)"></i>3–5</span><span><i class="sw" style="background:var(--seq3)"></i>6+ entities</span>`;
+}
+
+// ---------- coverage bars ----------
+function renderBars(){
+  const svg = $('#bars'), rowH = 30, lw = 200, W = 560, x0 = lw + 8;
+  const rows = assemblies.map(a => { const ps = subtree(a.id).map(i => parts[i]);
+    return {a, ok: ps.filter(p => !p.gap).length, warn: ps.filter(p => p.gap === 'no_canadian_owned_candidate').length, crit: ps.filter(p => p.gap === 'no_candidate').length, n: ps.length}; });
+  const maxN = Math.max(...rows.map(r => r.n)), scale = (W - x0 - 40) / maxN, H = rows.length * rowH + 22;
+  svg.setAttribute('viewBox', `0 0 ${W} ${H}`); svg.style.width = '100%';
+  let h = '';
+  for (let t = 0; t <= maxN; t += 2) h += `<line x1="${x0 + t * scale}" x2="${x0 + t * scale}" y1="0" y2="${H - 18}" stroke="${css('--line')}"/><text class="cnt" x="${x0 + t * scale}" y="${H - 4}" text-anchor="middle">${t}</text>`;
+  rows.forEach((r, i) => { const y = i * rowH + 6; let x = x0; const sel = state.sel && state.sel.kind === 'asm' && state.sel.id === r.a.id;
+    h += `<g class="row" data-id="${r.a.id}" tabindex="0" role="button" aria-label="${esc(r.a.name)}: ${r.ok} covered, ${r.warn} none Canadian-owned, ${r.crit} no candidate">
+      <text x="${lw}" y="${y + 13}" text-anchor="end" style="${sel ? 'font-weight:600;fill:var(--ink)' : ''}">${esc(r.a.name.length > 28 ? r.a.name.slice(0, 27) + '…' : r.a.name)}</text>`;
+    for (const [k, v] of [['ok', r.ok], ['warn', r.warn], ['crit', r.crit]]) { if (!v) continue; const w = v * scale - 2;
+      h += `<rect x="${x}" y="${y}" width="${Math.max(w, 2)}" height="18" fill="${css('--st-' + k)}"><title>${v}</title></rect>`; x += v * scale; }
+    h += `<text class="cnt" x="${x + 4}" y="${y + 13}">${r.n}</text></g>`; });
+  svg.innerHTML = h;
+  svg.querySelectorAll('.row').forEach(g => { const go = () => setSel({kind:'asm', id:g.dataset.id, label:parts[g.dataset.id].name});
+    g.onclick = go; g.onkeydown = ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } };
+    g.onmousemove = ev => { const r = rows.find(x => x.a.id === g.dataset.id); showTip(ev, `<b>${esc(r.a.name)}</b><br>Canadian-owned candidate: ${r.ok}<br>None Canadian-owned: ${r.warn}<br>No candidate: ${r.crit}`); };
+    g.onmouseleave = hideTip; });
+}
+
+// ---------- right panel: public lock + top gaps, or working-view critical path ----------
+function renderRight(){
+  const el = $('#right6');
+  if (O && renderWorking) { renderWorking(el); return; }
+  {
+    const gaps = T.parts.filter(p => p.gap === 'no_candidate');
+    el.innerHTML = `<div class="ph"><h2 id="r6H">Gaps to close first</h2><span class="hint">Parts with no public candidate</span></div>
+      <ul class="gaplist">${gaps.map(p => `<li><span class="id">${p.id}</span><span style="flex:1">${esc(p.name)}</span><span class="st crit"><i>✕</i>No candidate</span></li>`).join('')}</ul>
+      <div class="lock" style="margin-top:14px"><div class="k">Assessment · private engine</div>Chokepoint scores, lead times, critical path and stress scenarios come from the PHAROS engine through the public engine interface. They are not part of the public tier.</div>`;
+    return;
+  }
+}
+
+// ---------- explorer ----------
+let filter = 'all', query = '', open = new Set();
+const headRow = () => '<th>ID</th><th>Part</th><th>Candidates</th><th>Ownership</th><th>Status</th>' + workHead;
+function match(p, sp){
+  if (sp && !sp.has(p.id)) return false;
+  if (filter === 'covered' && p.gap) return false;
+  if (filter === 'ecl' && !p.export_list.length) return false;
+  if (!['all','covered','ecl'].includes(filter) && p.gap !== filter) return false;
+  if (query && !(p.name + ' ' + p.id + ' ' + p.candidates.map(c => c.name).join(' ')).toLowerCase().includes(query)) return false;
+  return true;
+}
+let workCells = () => '', renderWorking = null, workHead = '';
+
+function renderTable(){
+  $('#thead').innerHTML = headRow();
+  const sp = selParts(), rows = [], list = T.parts.filter(p => match(p, sp)); const cols = O ? 7 : 5;
+  $('#exHint').textContent = `${list.length} of ${T.parts.length} parts`;
+  for (const p of list) {
+    const own = [...new Set(p.candidates.map(c => ownKey(c.ownership_class)))].map(k => `<span class="own ${k}">${ownLbl[k]}</span>`).join(' ');
+    const pv = O && O.parts[p.id];
+    rows.push(`<tr class="part" tabindex="0" data-id="${p.id}" aria-expanded="${open.has(p.id)}"><td class="id">${p.id}</td>
+      <td><span style="display:inline-block;width:${p.level * 12}px"></span>${esc(p.name)} ${p.export_list.length ? '<span class="ecl">ECL 6-3</span>' : ''}</td>
+      <td>${p.candidate_count}</td><td>${own || '<span class="muted">—</span>'}</td><td>${stHtml(p)}</td>
+      ${O ? workCells(pv) : ''}</tr>`);
+    if (open.has(p.id)) {
+      const c = p.candidates.map(c => { const e = ents[c.id]; return `<li><b>${esc(e.name)}</b> <span class="own ${ownKey(e.ownership_class)}">${ownLbl[ownKey(e.ownership_class)]}</span> <span class="muted">${esc(e.capability)}</span> ${e.sources.map((s, i) => `<a class="src" href="${esc(s)}" target="_blank" rel="noopener">[${i + 1}]</a>`).join(' ')}</li>`; }).join('');
+      rows.push(`<tr class="detail"><td></td><td colspan="${cols - 1}">${c ? '<ul class="cands">' + c + '</ul>' : '<span class="st crit"><i>✕</i>No public record of a company with this capability.</span>'}${p.note ? '<div class="muted" style="margin-top:6px">' + esc(p.note) + '</div>' : ''}${(p.sources || []).length ? '<div style="margin-top:6px">Part sources: ' + p.sources.map((s, i) => `<a class="src" href="${esc(s)}" target="_blank" rel="noopener">[${i + 1}]</a>`).join(' ') + '</div>' : ''}</td></tr>`);
+    }
+  }
+  $('#tbl tbody').innerHTML = rows.join('') || `<tr><td colspan="${cols}" class="muted">No parts match.</td></tr>`;
+}
+$('#tbl').addEventListener('click', e => { const tr = e.target.closest('tr.part'); if (!tr || e.target.closest('a')) return; const id = tr.dataset.id; open.has(id) ? open.delete(id) : open.add(id); renderTable(); });
+$('#tbl').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr.part')) { e.preventDefault(); e.target.click(); } });
+document.querySelectorAll('.chip[data-f]').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; document.querySelectorAll('.chip[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderTable(); }));
+$('#q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderTable(); });
+
+function renderAll(){ renderFilterbar(); renderNet(); renderCarto(); renderBars(); renderTable(); }
+renderAll(); renderRight();
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', renderAll);
+new MutationObserver(renderAll).observe(document.documentElement, {attributes: true, attributeFilter: ['data-theme']});
+})();
+</script>
+
+</html>
