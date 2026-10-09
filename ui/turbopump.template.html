@@ -1,0 +1,238 @@
+<title>Turbopump Supply Map</title>
+<!-- Handling: Unclassified — public (public build). SPDX-License-Identifier: Apache-2.0 -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: instrument panel. Summary strip and gap bar first, then a tabbed working area (BOM tree, entities, trace, method). */
+:root{
+  --ink:#17232B; --paper:#F6F8F8; --surface:#FFFFFF; --line:#D5DEE1; --muted:#5A6B78;
+  --blue:#137A88; --blue-soft:#E3F1F3; --teal:#1F8A5B; --gold:#B7860B; --gold-soft:#FBF1D3;
+  --crimson:#D6295E; --crimson-soft:#FBE4EC; --grey-bar:#A9B6BD;
+  --f-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans","Segoe UI",system-ui,sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ink:#E6EEF0; --paper:#11191E; --surface:#17232B; --line:#2C3B44; --muted:#93A4AE;
+  --blue:#4FB3C0; --blue-soft:#163A40; --teal:#4CC28D; --gold:#F0B429; --gold-soft:#3A3115;
+  --crimson:#F06A92; --crimson-soft:#43202C; --grey-bar:#53636C; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ink:#E6EEF0; --paper:#11191E; --surface:#17232B; --line:#2C3B44; --muted:#93A4AE;
+  --blue:#4FB3C0; --blue-soft:#163A40; --teal:#4CC28D; --gold:#F0B429; --gold-soft:#3A3115;
+  --crimson:#F06A92; --crimson-soft:#43202C; --grey-bar:#53636C; color-scheme:dark}
+*{box-sizing:border-box}
+.wrap>*{min-width:0}
+body{background:var(--paper);color:var(--ink);font:15px/1.55 var(--f-body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:20px;padding-block:28px 48px;display:grid;gap:22px}
+a{color:var(--blue)} a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.eyebrow{font:600 11.5px/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--blue)}
+h1{font:800 clamp(28px,4.4vw,40px)/1.08 var(--f-display);margin:6px 0 8px;text-wrap:balance;letter-spacing:-.01em}
+h2{font:700 19px/1.25 var(--f-display);margin:0;text-wrap:balance}
+.lede{max-width:68ch;color:var(--muted);margin:0}
+.meta{font:12.5px/1.4 var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:10px}
+.banner{border:1px solid var(--gold);background:var(--gold-soft);padding:10px 14px;font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.stat{background:var(--surface);padding:14px 16px;display:grid;gap:4px;align-content:start}
+.stat b{font:700 30px/1 var(--f-display);font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--muted);line-height:1.35}
+.stat.gapA b{color:var(--crimson)} .stat.gapB b{color:var(--gold)}
+.panel{background:var(--surface);border:1px solid var(--line);padding:18px}
+.gapbar{display:flex;height:22px;margin:12px 0 8px;border:1px solid var(--line)}
+.gapbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.c-ok{background:var(--teal)} .c-b{background:var(--gold)} .c-a{background:var(--crimson)}
+.lock{display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:start;border:1px dashed var(--grey-bar);padding:14px 16px;background:var(--surface)}
+.lock .k{font:500 12px var(--f-mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;grid-row:span 2;padding-top:3px}
+.lock p{margin:0;font-size:14px}
+.tabs{display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--line)}
+.tabs button{font:600 14px var(--f-body);color:var(--muted);background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--blue)}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.chip{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 11px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+input[type=search]{font:14px var(--f-body);padding:6px 10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);min-width:0;flex:1 1 180px;max-width:280px}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{font:600 11.5px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+td.id{font:12.5px var(--f-mono);color:var(--muted);white-space:nowrap}
+tr.part{cursor:pointer} tr.part:hover td{background:var(--blue-soft)}
+.indent{display:inline-block}
+.pill{display:inline-block;font:600 11.5px var(--f-body);padding:2px 8px;white-space:nowrap}
+.pill.a{background:var(--crimson-soft);color:var(--crimson)} .pill.b{background:var(--gold-soft);color:var(--gold)} .pill.ok{background:var(--blue-soft);color:var(--teal)}
+.own{font:500 11.5px var(--f-mono);padding:1px 6px;border:1px solid var(--line);white-space:nowrap}
+.own.ca{border-color:var(--teal);color:var(--teal)} .own.sub{border-color:var(--gold);color:var(--gold)} .own.fo{color:var(--muted)}
+.ecl{font:500 11.5px var(--f-mono);color:var(--crimson)}
+tr.detail td{background:var(--paper);font-size:13.5px}
+.cands{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.src{font:12px var(--f-mono);word-break:break-all}
+.muted{color:var(--muted)}
+.trace{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.steps{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:4px}
+.steps li{display:flex;justify-content:space-between;gap:12px;border-bottom:1px solid var(--line);padding:4px 0;font-size:14px}
+.ok-t{color:var(--teal);font-weight:600} .gap-t{color:var(--crimson);font-weight:600}
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.method h3{font:700 15px var(--f-display);margin:0 0 6px}
+.method p,.method li{font-size:14px;margin:0 0 6px;max-width:65ch}
+.method ul{margin:0;padding-left:18px}
+.priv td.lt{font:13px var(--f-mono);white-space:nowrap;font-variant-numeric:tabular-nums}
+.crit{background:var(--crimson);color:#fff;font:700 11px var(--f-body);padding:2px 7px;letter-spacing:.06em}
+footer{font:12px/1.5 var(--f-mono);color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-wrap:wrap;gap:6px 18px}
+@media (max-width:560px){.stat b{font-size:24px} td,th{padding:7px 6px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="eyebrow">PHAROS Alpha · open shell (OpenPosture)</div>
+    <h1>Turbopump Supply Map</h1>
+    <p class="lede" id="lede">Who could supply each part of a small liquid-rocket turbopump, who owns them, and where the gaps are. Built from public records only. Reference case: the Launch Canada turbopump programme.</p>
+    <div class="meta" id="meta"></div>
+  </header>
+  <div class="banner" id="banner" hidden></div>
+
+  <section class="stats" id="stats" aria-label="Summary"></section>
+
+  <section class="panel" aria-labelledby="gapH">
+    <h2 id="gapH">Coverage of the 41 parts</h2>
+    <div class="gapbar" id="gapbar" role="img"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="lock" id="lock" aria-label="Assessment">
+    <span class="k">Assessment</span>
+    <p><b>Private engine.</b> Chokepoint scores, lead times, critical path and stress scenarios come from the PHAROS engine, which plugs in through the public engine interface and is not published.</p>
+    <p class="muted">This public build shows facts only: candidates, ownership, export-list category and gaps.</p>
+  </section>
+
+  <section id="privsec" hidden></section>
+
+  <nav class="tabs" role="tablist" aria-label="Views">
+    <button role="tab" id="tab-bom" aria-selected="true" aria-controls="v-bom">Bill of materials</button>
+    <button role="tab" id="tab-ent" aria-selected="false" aria-controls="v-ent">Entities</button>
+    <button role="tab" id="tab-trace" aria-selected="false" aria-controls="v-trace">Evidence trace</button>
+    <button role="tab" id="tab-method" aria-selected="false" aria-controls="v-method">Method</button>
+  </nav>
+
+  <section id="v-bom" role="tabpanel" aria-labelledby="tab-bom">
+    <div class="toolbar">
+      <button class="chip" data-f="all" aria-pressed="true">All parts</button>
+      <button class="chip" data-f="no_candidate" aria-pressed="false">No candidate found</button>
+      <button class="chip" data-f="no_canadian_owned_candidate" aria-pressed="false">No Canadian-owned candidate</button>
+      <button class="chip" data-f="covered" aria-pressed="false">Canadian-owned candidate</button>
+      <button class="chip" data-f="ecl" aria-pressed="false">Export-listed</button>
+      <input type="search" id="q" placeholder="Search parts or companies" aria-label="Search parts or companies">
+    </div>
+    <div class="scroll"><table id="bom"><thead><tr><th>ID</th><th>Part</th><th>Candidates</th><th>Ownership of candidates</th><th>Status</th></tr></thead><tbody></tbody></table></div>
+    <p class="muted" style="font-size:13px">Select a part to see its candidates and sources. A candidate is a company with a public, relevant capability. It is not a verified or qualified supplier.</p>
+  </section>
+
+  <section id="v-ent" role="tabpanel" aria-labelledby="tab-ent" hidden>
+    <div class="scroll"><table id="ent"><thead><tr><th>ID</th><th>Entity</th><th>Role</th><th>Ownership</th><th>Location</th><th>Capability</th><th>Grade</th><th>Sources</th></tr></thead><tbody></tbody></table></div>
+  </section>
+
+  <section id="v-trace" role="tabpanel" aria-labelledby="tab-trace" hidden>
+    <p class="muted" style="max-width:70ch;margin-top:0">Serial-level evidence for a fictional rotor, read from an OpenChokepoint registry. Synthetic data. It shows how each process step is backed, or not, by an evidence record. Real records will show which steps happened but not their order.</p>
+    <div class="trace" id="trace"></div>
+  </section>
+
+  <section id="v-method" role="tabpanel" aria-labelledby="tab-method" hidden>
+    <div class="method">
+      <div><h3>What a status means</h3><ul>
+        <li><b>No candidate found</b>: no public record shows a company with the capability. These parts set the first interview agenda.</li>
+        <li><b>No Canadian-owned candidate</b>: candidates exist, but every one is foreign-owned or a Canadian plant of a foreign parent.</li>
+        <li><b>Canadian-owned candidate</b>: at least one candidate is Canadian-owned.</li></ul></div>
+      <div><h3>Ownership, not location</h3><p>Ownership class is recorded separately from location. A foreign-owned plant in Canada counts as a Canadian subsidiary of a foreign parent, not as domestic.</p><p>Where ownership is unverified, the record says so.</p></div>
+      <div><h3>What is left out</h3><p>Turbopumps are on Canada's Export Control List (item 6-3). This map holds supply mapping only: part categories, companies and sources. No materials, processes, dimensions, performance, test data or lead times.</p></div>
+      <div><h3>Sources and grades</h3><p>Every entity cites an https source. Grades: <i>confirmed</i> (primary source) or <i>reported</i> (secondary). Citability: P primary, AN named analyst, AS secondary.</p><p>Data: <span class="src">data/turbopump/</span> in the openposture repository, Apache-2.0.</p></div>
+    </div>
+  </section>
+
+  <footer><span>Element Ventures (Canada) Ltd.</span><span id="foot-h">Handling: Unclassified — public</span><span>Apache-2.0</span><span id="foot-asof"></span></footer>
+</div>
+
+<script>
+window.TP_DATA = /*__DATA__*/null;
+(function(){
+const D = window.TP_DATA; const T = D.tp, TR = D.trace, O = D.overlay || null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S = T.summary;
+const noCA = S.parts_no_canadian_owned_candidate - S.parts_no_candidate;
+const covered = S.parts - S.parts_no_canadian_owned_candidate;
+const ents = Object.fromEntries(T.entities.map(e => [e.id, e]));
+const ownCls = o => o === 'Canadian' ? 'ca' : (o.startsWith('Canadian subsidiary') ? 'sub' : 'fo');
+const ownLbl = o => o === 'Canadian' ? 'Canadian-owned' : (o.startsWith('Canadian subsidiary') ? 'CA plant, foreign parent' : 'Foreign');
+
+$('#meta').innerHTML = `<span>As of ${esc(T.as_of)}</span><span>${S.entities} public-record entities</span><span>Reference: ${esc(T.reference.description)}</span>`;
+$('#foot-asof').textContent = 'Data as of ' + T.as_of;
+if (O) {
+  $('#eyebrow').textContent = 'PHAROS Alpha · DRDC / Launch Canada working view';
+  $('#banner').hidden = false; $('#banner').innerHTML = esc(O.banner);
+  $('#foot-h').textContent = O.handling;
+  $('#lock').hidden = true;
+}
+const stat = (n, l, c='') => `<div class="stat ${c}"><b>${n}</b><span>${l}</span></div>`;
+$('#stats').innerHTML = stat(S.parts, 'parts mapped') + stat(S.parts_no_candidate, 'no candidate found', 'gapA') +
+  stat(noCA, 'candidates found, none Canadian-owned', 'gapB') + stat(covered, 'with a Canadian-owned candidate') +
+  stat(S.parts_export_listed, 'export-listed assemblies (ECL 6-3)') + stat(S.entities_by_ownership['Canadian'] || 0, 'of ' + S.entities + ' entities Canadian-owned');
+const seg = [[covered,'c-ok','Canadian-owned candidate'],[noCA,'c-b','Candidates, none Canadian-owned'],[S.parts_no_candidate,'c-a','No candidate found']];
+$('#gapbar').innerHTML = seg.map(([n,c]) => `<i class="${c}" style="width:${(100*n/S.parts).toFixed(2)}%" title="${n}"></i>`).join('');
+$('#gapbar').setAttribute('aria-label', seg.map(([n,,l]) => `${l}: ${n}`).join('; '));
+$('#legend').innerHTML = seg.map(([n,c,l]) => `<span><i class="${c}"></i>${l}: <b>${n}</b> of ${S.parts}</span>`).join('');
+
+// BOM table
+let filter = 'all', query = '', open = new Set();
+const status = p => p.gap === 'no_candidate' ? '<span class="pill a">No candidate</span>' :
+  p.gap ? '<span class="pill b">None Canadian-owned</span>' : '<span class="pill ok">Canadian-owned</span>';
+function matches(p){
+  if (filter === 'covered' && p.gap) return false;
+  if (filter === 'ecl' && !p.export_list.length) return false;
+  if (!['all','covered','ecl'].includes(filter) && p.gap !== filter) return false;
+  if (query) { const hay = (p.name + ' ' + p.id + ' ' + p.candidates.map(c => c.name).join(' ')).toLowerCase(); if (!hay.includes(query)) return false; }
+  return true;
+}
+function renderBom(){
+  const rows = [];
+  for (const p of T.parts.filter(matches)) {
+    const own = [...new Set(p.candidates.map(c => c.ownership_class))].map(o => `<span class="own ${ownCls(o)}">${ownLbl(o)}</span>`).join(' ');
+    const pv = O && O.parts[p.id];
+    rows.push(`<tr class="part" tabindex="0" data-id="${p.id}" aria-expanded="${open.has(p.id)}"><td class="id">${p.id}</td>
+      <td><span class="indent" style="width:${p.level*14}px"></span>${esc(p.name)} ${p.export_list.length ? '<span class="ecl">ECL ' + esc(p.export_list.join(', ').replace('ECL-','')) + '</span>' : ''}</td>
+      <td>${p.candidate_count || '<span class="muted">0</span>'}</td><td>${own || '<span class="muted">—</span>'}</td><td>${status(p)}</td></tr>`);
+    if (open.has(p.id)) {
+      const c = p.candidates.map(c => { const e = ents[c.id]; return `<li><b>${esc(e.name)}</b> <span class="own ${ownCls(e.ownership_class)}">${ownLbl(e.ownership_class)}</span> <span class="muted">${esc(e.capability)}</span></li>`; }).join('');
+      const src = (p.sources||[]).map(s => `<a class="src" href="${esc(s)}" target="_blank" rel="noopener">${esc(s)}</a>`).join('<br>');
+      const priv = '';
+      rows.push(`<tr class="detail"><td></td><td colspan="4">${c ? '<ul class="cands">' + c + '</ul>' : '<span class="gap-t">No public record of a company with this capability.</span>'}${p.note ? '<div class="muted" style="margin-top:6px">' + esc(p.note) + '</div>' : ''}${src ? '<div style="margin-top:8px">' + src + '</div>' : ''}${priv}</td></tr>`);
+    }
+  }
+  $('#bom tbody').innerHTML = rows.join('') || '<tr><td colspan="5" class="muted">No parts match.</td></tr>';
+}
+$('#bom').addEventListener('click', e => { const tr = e.target.closest('tr.part'); if (!tr || e.target.closest('a')) return; const id = tr.dataset.id; open.has(id) ? open.delete(id) : open.add(id); renderBom(); });
+$('#bom').addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('tr.part')) { e.preventDefault(); e.target.click(); } });
+document.querySelectorAll('.chip').forEach(b => b.addEventListener('click', () => { filter = b.dataset.f; document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x === b)); renderBom(); }));
+$('#q').addEventListener('input', e => { query = e.target.value.trim().toLowerCase(); renderBom(); });
+renderBom();
+
+// Entities
+const roleLbl = r => r.replace(/_/g, ' ');
+$('#ent tbody').innerHTML = T.entities.map(e => `<tr><td class="id">${e.id}</td><td><b>${esc(e.name)}</b>${e.ultimate_parent ? '<div class="muted" style="font-size:12.5px">Parent: ' + esc(e.ultimate_parent) + '</div>' : ''}</td>
+  <td>${esc(roleLbl(e.role))}</td><td><span class="own ${ownCls(e.ownership_class)}">${ownLbl(e.ownership_class)}</span></td>
+  <td>${esc([e.location.region, e.location.country].filter(Boolean).join(', '))}</td><td style="min-width:220px">${esc(e.capability)}</td>
+  <td>${esc(e.evidence_grade)} · ${esc(e.citability)}</td><td>${e.sources.map((s,i) => `<a href="${esc(s)}" target="_blank" rel="noopener">[${i+1}]</a>`).join(' ')}</td></tr>`).join('');
+
+// Trace
+$('#trace').innerHTML = TR.serials.map(s => `<div class="panel"><h2>${esc(s.serial)} <span class="muted" style="font:500 13px var(--f-mono)">${esc(s.design)} · synthetic</span></h2>
+  <div class="muted" style="font-size:13.5px">${s.with_evidence} of ${s.steps.length} steps have an evidence record</div>
+  <ol class="steps">${s.steps.map(x => `<li><span>${esc(x.kind.replace(/_/g,' '))}</span><span class="${x.evidence ? 'ok-t' : 'gap-t'}">${x.evidence ? 'record present' : 'record missing'}</span></li>`).join('')}</ol></div>`).join('');
+
+// Tabs
+const tabs = [...document.querySelectorAll('[role=tab]')];
+function show(id){ tabs.forEach(t => { const on = t.id === id; t.setAttribute('aria-selected', on); document.getElementById(t.getAttribute('aria-controls')).hidden = !on; }); }
+tabs.forEach(t => t.addEventListener('click', () => show(t.id)));
+const h = location.hash.slice(1); if (h && document.getElementById('tab-' + h)) show('tab-' + h);
+
+})();
+</script>
