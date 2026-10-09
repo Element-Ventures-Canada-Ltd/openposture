@@ -34,4 +34,4 @@ Then open http://localhost:8000. Tests: `python3 -m unittest discover -s tests -
 
 Contributions follow the OpenChokepoint programme rules: CLA, contribution scope, handling and the deferred bounty ledger. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Licensed under Apache-2.0. © 2026 T. Leroy Smith. Exclusively licensed to Element Ventures (Canada) Ltd.
+Code under Apache-2.0; documentation and data under the Open Government Licence – Canada 2.0. See [LICENSING.md](LICENSING.md). © 2026 T. Leroy Smith. Exclusively licensed to Element Ventures (Canada) Ltd.
